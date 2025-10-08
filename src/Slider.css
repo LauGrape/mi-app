@@ -1,0 +1,45 @@
+.slider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: #f0f0f0;
+  padding: 0.5rem;
+  border-radius: 5px;
+  
+}
+
+.slider-content {
+  text-align: center;
+    max-width: 600px;
+  width: 100%;
+  position: relative;
+  text-align: center;
+}
+
+
+.slider img {
+  width: 500px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+  max-width: 500px;  /* 🔽 controla el tamaño máximo */
+  width: 100%;
+  height: auto;
+  object-fit: contain; /* 🔁 evita recorte */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.caption {
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.slider-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+}
