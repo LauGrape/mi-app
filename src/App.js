@@ -1,12 +1,39 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import Slider from './Slider';
 import video from './assets/video.mp4';
 import logo from './assets/logo.png';
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import {
+  FaFacebook,
+  FaTwitter,
+  FaInstagram,
+  FaLinkedin,
+  FaYoutube,
+  FaTiktok,
+  FaTwitch
+} from 'react-icons/fa';
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState('light');
+
+  useEffect(() => {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    const initialTheme = prefersDark.matches ? 'dark' : 'light';
+    setTheme(initialTheme);
+
+    const handleChange = (event) => {
+      setTheme(event.matches ? 'dark' : 'light');
+    };
+
+    prefersDark.addEventListener('change', handleChange);
+    return () => prefersDark.removeEventListener('change', handleChange);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.body.setAttribute('data-theme', theme);
+  }, [theme]);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -14,6 +41,10 @@ function App() {
 
   const closeMenu = () => {
     setMenuOpen(false);
+  };
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
   return (
@@ -26,6 +57,10 @@ function App() {
             <img src={logo} alt="México in Tech" className="logo" />
           </div>
 
+          <button className="theme-toggle" onClick={toggleTheme} aria-label="Cambiar tema">
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
+
           {/* Botón hamburguesa */}
           <button className="hamburger" onClick={toggleMenu}>
             ☰
@@ -34,9 +69,9 @@ function App() {
           {/* Enlaces del menú */}
           <ul className={`nav-links ${menuOpen ? 'open' : ''}`}>
             <li><a href="#inicio" onClick={closeMenu}>Inicio</a></li>
+            <li><a href="#video" onClick={closeMenu}>Webinars</a></li>
             <li><a href="#info" onClick={closeMenu}>Cursos</a></li>
             <li><a href="#contacto" onClick={closeMenu}>Contacto</a></li>
-            <li><a href="#video" onClick={closeMenu}>Video</a></li>
           </ul>
         </nav>
       </header>
@@ -44,6 +79,8 @@ function App() {
       <main>
         {/* Slider de Bienvenida */}
         <section id="inicio" className="section">
+          <h2>Bienvenidos a México in Tech</h2>
+          <h3>Algunos de nuestros webinars</h3>
           <Slider />
         </section>
 
@@ -76,8 +113,17 @@ function App() {
 
         {/* Formulario de contacto */}
         <section id="contacto" className="section contact-section">
-          <h2>Contáctanos</h2>
-          <form className="contact-form">
+          <div className="contact-grid">
+            <div className="contact-copy">
+            <h2>Contáctanos</h2>
+            <p>Nos encantaría colaborar contigo.</p>
+            <ul>
+              <li>¿Te gustaría compartir con la comunidad?</li>   
+              <li>Invítanos a tus eventos. Nos encantaría participar</li>
+            </ul>
+          </div>
+            <form className="contact-form">
+              <h4>Envíanos un mensaje</h4>
             <div className="form-group">
               <label htmlFor="nombre">Nombre:</label>
               <input
@@ -95,7 +141,7 @@ function App() {
                 type="email"
                 id="email"
                 name="email"
-                placeholder="tu@correo.com"
+                placeholder="juan@gmail.com"
                 required
               />
             </div>
@@ -113,11 +159,12 @@ function App() {
 
             <button type="submit">Enviar Mensaje</button>
           </form>
+          </div>
         </section>
 
         {/* Video */}
         <section id="video" className="section">
-          <h2>Video de Presentación</h2>
+          <h2>Webinars</h2>
           <div className="video-box">
             <video controls>
               <source src={video} type="video/mp4" />
@@ -149,6 +196,38 @@ function App() {
             rel="noopener noreferrer"
           >
             <FaLinkedin />
+          </a>
+
+          <a
+            href="https://www.youtube.com/mexicointech"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaYoutube />
+          </a>
+
+          <a
+            href="https://x.com/mxintech"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaTwitter />
+          </a>
+
+          <a
+            href="https://www.tiktok.com/mxintech"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaTiktok />
+          </a>
+
+          <a
+            href="https://www.twitch.tv/mxintech"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaTwitch />
           </a>
         </div>
       </footer>
