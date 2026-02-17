@@ -57,10 +57,6 @@ function App() {
             <img src={logo} alt="México in Tech" className="logo" />
           </div>
 
-          <button className="theme-toggle" onClick={toggleTheme} aria-label="Cambiar tema">
-            {theme === 'dark' ? '☀️' : '🌙'}
-          </button>
-
           {/* Botón hamburguesa */}
           <button className="hamburger" onClick={toggleMenu}>
             ☰
@@ -76,12 +72,39 @@ function App() {
         </nav>
       </header>
 
+      {/*
+      <button className="theme-toggle" onClick={toggleTheme} aria-label="Cambiar tema">
+        {theme === 'dark' ? '☀️' : '🌙'}
+      </button>
+      */}
       <main>
         {/* Slider de Bienvenida */}
         <section id="inicio" className="section">
-          <h2>Bienvenidos a México in Tech</h2>
-          <h3>Algunos de nuestros webinars</h3>
           <Slider />
+        </section>
+
+        <section id="acercade" className="section acercade-section">
+          <h2>Acerca de México in Tech</h2>
+          <p id="p-acercade">
+            México in Tech es una comunidad dedicada a fomentar el aprendizaje
+            y la colaboración en el ámbito tecnológico. Ofrecemos cursos,
+            webinars y eventos para ayudar a los profesionales a crecer en sus
+            carreras.
+          </p>
+          <h2>Misión</h2>
+            <p id="p-mision">
+            Nuestra misión es empoderar a los desarrolladores mexicanos con
+            conocimientos prácticos y reales, compartidos por expertos de la
+            industria. Queremos crear un espacio donde los devs puedan aprender,
+            colaborar y crecer juntos.
+            </p>
+          <h2>Visión</h2>
+            <p id="p-vision">
+            Ser la comunidad de referencia en México para el aprendizaje y la
+            colaboración tecnológica, impulsando el crecimiento profesional de los
+            desarrolladores y contribuyendo al desarrollo del ecosistema tech en
+            el país.
+            </p>
         </section>
 
         {/* Sección de cursos */}

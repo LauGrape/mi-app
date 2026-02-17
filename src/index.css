@@ -39,6 +39,16 @@ code {
   text-align: center;
 }
 
+.section {
+  scroll-snap-align: start;
+}
+
+html, body {
+  scroll-behavior: smooth;
+  scroll-snap-type: y proximity;
+  scroll-padding-top: var(--header-height);
+}
+
 .Main-content section {
   margin-bottom: 3rem;
   background: rgb(203, 166, 178);

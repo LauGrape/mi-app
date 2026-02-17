@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Slider.css";
 import slide1 from "./assets/slide1.jpg";
-import slide2 from "./assets/slide2.png";
+import slide2 from "./assets/slide2.jpg";
 import slide3 from "./assets/slide3.jpg";
 
 
 const Slider = () => {
   const slides = [
     { id: 1, url: slide1, caption: "Bienvenido a México in Tech" },
-    { id: 2, url: slide2, caption: "Explora nuestros cursos" },
-    { id: 3, url: slide3, caption: "Contáctanos para más información" },
+    { id: 2, url: slide2, caption: "Potencia tu carrera uniendote a México in Tech" },
+    { id: 3, url: slide3, caption: "Algo" },
   ];
 
   const [current, setCurrent] = useState(0);
@@ -22,14 +22,42 @@ const Slider = () => {
     setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
+  useEffect(() => {
+    const id = setInterval(nextSlide, 5000);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <div className="slider">
-      <button onClick={prevSlide} className="slider-button">❮</button>
-      <div className="slider-content">
-        <img src={slides[current].url} alt={`Slide ${current + 1}`} />
-        <p className="caption">{slides[current].caption}</p>
+    <div className="slider-hero">
+      <div
+        className="slider-frame"
+        key={slides[current].id}
+        style={{ backgroundImage: `url(${slides[current].url})` }}
+      >
+        <div className="slider-overlay" />
+        <div className="slider-welcome-message">
+          <h1>México in Tech</h1>
+          <div className="slider-subrow">
+            <h2 className="eyebrow">De Devs para Devs: Compartiendo conocimiento real.</h2>
+            <p className="caption">{slides[current].caption}</p>
+          </div>
+        </div>
+        <div className="slider-controls">
+          <button onClick={prevSlide} className="slider-button" aria-label="Anterior">❮</button>
+          <button onClick={nextSlide} className="slider-button" aria-label="Siguiente">❯</button>
+        </div>
+        <div className="slider-dots">
+          {slides.map((slide, idx) => (
+            <button
+              key={slide.id}
+              className={`slider-dot ${idx === current ? 'active' : ''}`}
+              onClick={() => setCurrent(idx)}
+              aria-label={`Ir al slide ${idx + 1}`}
+            />
+          ))}
+        </div>
       </div>
-      <button onClick={nextSlide} className="slider-button">❯</button>
     </div>
   );
 };
