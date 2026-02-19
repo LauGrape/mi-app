@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 import Slider from './Slider';
 import video from './assets/video.mp4';
+import ajolote from './assets/ajolote.png';
 import logo from './assets/logo.png';
 import {
   FaFacebook,
@@ -12,6 +14,136 @@ import {
   FaTiktok,
   FaTwitch
 } from 'react-icons/fa';
+
+const HomePage = () => (
+  <>
+    {/* Slider de Bienvenida */}
+    <section id="inicio" className="section">
+      <Slider />
+    </section>
+
+    <section id="acercade" className="section acercade-section">
+      <div className="acercade-block">
+        <h2>Acerca de México in Tech</h2>
+        <p id="p-acercade">
+          México in Tech es una comunidad dedicada a fomentar el aprendizaje
+          y la colaboración en el ámbito tecnológico. Ofrecemos cursos,
+          webinars y eventos para ayudar a los profesionales a crecer en sus
+          carreras.
+        </p>
+      </div>
+      <div className="acercade-block">
+        <h2>Misión</h2>
+        <p id="p-mision">
+          Nuestra misión es empoderar a los desarrolladores mexicanos con
+          conocimientos prácticos y reales, compartidos por expertos de la
+          industria. Queremos crear un espacio donde los devs puedan aprender,
+          colaborar y crecer juntos.
+        </p>
+      </div>
+      <div className="acercade-block">
+        <h2>Visión</h2>
+        <p id="p-vision">
+          Ser la comunidad de referencia en México para el aprendizaje y la
+          colaboración tecnológica, impulsando el crecimiento profesional de los
+          desarrolladores y contribuyendo al desarrollo del ecosistema tech en
+          el país.
+        </p>
+      </div>
+    </section>
+
+    {/* Video */}
+    <section id="video" className="section">
+      <h2>Webinars</h2>
+      <div className="video-box">
+        <video controls>
+          <source src={video} type="video/mp4" />
+          Tu navegador no soporta el video.
+        </video>
+      </div>
+    </section>
+  </>
+);
+
+const ContactPage = () => (
+  <section id="contacto" className="section contact-section">
+    <div className="contact-grid">
+      <div className="contact-copy">
+      <h2>Contáctanos</h2>
+      <p>Nos encantaría colaborar contigo.</p>
+      <ul>
+        <li>¿Te gustaría compartir con la comunidad?</li>   
+        <li>Invítanos a tus eventos. Nos encantaría participar</li>
+      </ul>
+    </div>
+      <form className="contact-form">
+        <h4>Envíanos un mensaje</h4>
+      <div className="form-group">
+        <label htmlFor="nombre">Nombre:</label>
+        <input
+          type="text"
+          id="nombre"
+          name="nombre"
+          placeholder="Tu nombre"
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="email">Correo electrónico:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="juan@gmail.com"
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="mensaje">Mensaje:</label>
+        <textarea
+          id="mensaje"
+          name="mensaje"
+          rows="5"
+          placeholder="Escribe tu mensaje..."
+          required
+        ></textarea>
+      </div>
+
+      <button type="submit">Enviar Mensaje</button>
+    </form>
+    </div>
+  </section>
+);
+
+const CursosPage = () => (
+  <section id="info" className="section info-section">
+    <h2>Cursos Disponibles</h2>
+    <div className="info-cards">
+      <div className="info-card">
+        <h3>Servidores Linux</h3>
+        <p>Administra un servidor Linux.</p>
+      </div>
+      <div className="info-card">
+        <h3>Linux: Command Line</h3>
+        <p>Aprende a usar comandos útiles en la terminal.</p>
+      </div>
+      <div className="info-card">
+        <h3>AWS IAM</h3>
+        <p>Roles, Políticas, Usuarios y Grupos.</p>
+      </div>
+      <div className="info-card">
+        <h3>AWS S3</h3>
+        <p>Almacenamiento, políticas S3 y ciclo de vida.</p>
+      </div>
+      <div className="info-card">
+        <h3>AWS RDS</h3>
+        <p>Bases de datos MySQL y PostgreSQL.</p>
+      </div>
+    </div>
+  </section>
+);
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -64,194 +196,94 @@ function App() {
 
           {/* Enlaces del menú */}
           <ul className={`nav-links ${menuOpen ? 'open' : ''}`}>
-            <li><a href="#inicio" onClick={closeMenu}>Inicio</a></li>
-            <li><a href="#video" onClick={closeMenu}>Webinars</a></li>
-            <li><a href="#info" onClick={closeMenu}>Cursos</a></li>
-            <li><a href="#contacto" onClick={closeMenu}>Contacto</a></li>
+            <li><Link to="/" onClick={closeMenu}>Inicio</Link></li>
+            <li><a href="/#acercade" onClick={closeMenu}>Acerca de</a></li>
+            <li><a href="/#video" onClick={closeMenu}>Webinars</a></li>
+            <li><Link to="/cursos" onClick={closeMenu}>Cursos</Link></li>
+            <li><Link to="/contact" onClick={closeMenu}>Contacto</Link></li>
           </ul>
         </nav>
       </header>
 
-      {/*
+      
       <button className="theme-toggle" onClick={toggleTheme} aria-label="Cambiar tema">
         {theme === 'dark' ? '☀️' : '🌙'}
       </button>
-      */}
+      
       <main>
-        {/* Slider de Bienvenida */}
-        <section id="inicio" className="section">
-          <Slider />
-        </section>
-
-        <section id="acercade" className="section acercade-section">
-          <h2>Acerca de México in Tech</h2>
-          <p id="p-acercade">
-            México in Tech es una comunidad dedicada a fomentar el aprendizaje
-            y la colaboración en el ámbito tecnológico. Ofrecemos cursos,
-            webinars y eventos para ayudar a los profesionales a crecer en sus
-            carreras.
-          </p>
-          <h2>Misión</h2>
-            <p id="p-mision">
-            Nuestra misión es empoderar a los desarrolladores mexicanos con
-            conocimientos prácticos y reales, compartidos por expertos de la
-            industria. Queremos crear un espacio donde los devs puedan aprender,
-            colaborar y crecer juntos.
-            </p>
-          <h2>Visión</h2>
-            <p id="p-vision">
-            Ser la comunidad de referencia en México para el aprendizaje y la
-            colaboración tecnológica, impulsando el crecimiento profesional de los
-            desarrolladores y contribuyendo al desarrollo del ecosistema tech en
-            el país.
-            </p>
-        </section>
-
-        {/* Sección de cursos */}
-        <section id="info" className="section info-section">
-          <h2>Cursos Disponibles</h2>
-          <div className="info-cards">
-            <div className="info-card">
-              <h3>Servidores Linux</h3>
-              <p>Administra un servidor Linux.</p>
-            </div>
-            <div className="info-card">
-              <h3>Linux: Command Line</h3>
-              <p>Aprende a usar comandos útiles en la terminal.</p>
-            </div>
-            <div className="info-card">
-              <h3>AWS IAM</h3>
-              <p>Roles, Políticas, Usuarios y Grupos.</p>
-            </div>
-            <div className="info-card">
-              <h3>AWS S3</h3>
-              <p>Almacenamiento, políticas S3 y ciclo de vida.</p>
-            </div>
-            <div className="info-card">
-              <h3>AWS RDS</h3>
-              <p>Bases de datos MySQL y PostgreSQL.</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Formulario de contacto */}
-        <section id="contacto" className="section contact-section">
-          <div className="contact-grid">
-            <div className="contact-copy">
-            <h2>Contáctanos</h2>
-            <p>Nos encantaría colaborar contigo.</p>
-            <ul>
-              <li>¿Te gustaría compartir con la comunidad?</li>   
-              <li>Invítanos a tus eventos. Nos encantaría participar</li>
-            </ul>
-          </div>
-            <form className="contact-form">
-              <h4>Envíanos un mensaje</h4>
-            <div className="form-group">
-              <label htmlFor="nombre">Nombre:</label>
-              <input
-                type="text"
-                id="nombre"
-                name="nombre"
-                placeholder="Tu nombre"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="email">Correo electrónico:</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="juan@gmail.com"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="mensaje">Mensaje:</label>
-              <textarea
-                id="mensaje"
-                name="mensaje"
-                rows="5"
-                placeholder="Escribe tu mensaje..."
-                required
-              ></textarea>
-            </div>
-
-            <button type="submit">Enviar Mensaje</button>
-          </form>
-          </div>
-        </section>
-
-        {/* Video */}
-        <section id="video" className="section">
-          <h2>Webinars</h2>
-          <div className="video-box">
-            <video controls>
-              <source src={video} type="video/mp4" />
-              Tu navegador no soporta el video.
-            </video>
-          </div>
-        </section>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/cursos" element={<CursosPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+        </Routes>
       </main>
 
       {/* Footer */}
       <footer className="footer">
-        <p>
-          &copy; {new Date().getFullYear()} México in Tech. Todos los derechos
-          reservados.
-        </p>
+        <div className="footer-content">
+          <div className="footer-col">
+            <img src={ajolote} alt="Ajolote" className="footer-logo" />
+            <h3>Mexico in Tech</h3>
+          </div>
+          <div className="footer-col">
+            <h3>Links</h3>
+            <ul>
+              <li><Link to="/cursos">Cursos</Link></li>
+              <li><Link to="/contact">Contacto</Link></li>
+            </ul>
+          </div>
+          <div className="footer-col">
+            <h3>Siguenos</h3>
+            <div className="social-icons">
+              <a
+                href="https://www.facebook.com/mxintech/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaFacebook />
+              </a>
 
-        <div className="social-icons">
-          <a
-            href="https://www.facebook.com/mxintech/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaFacebook />
-          </a>
+              <a
+                href="https://www.linkedin.com/company/mxintech/posts/?feedView=all"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaLinkedin />
+              </a>
 
-          <a
-            href="https://www.linkedin.com/company/mxintech/posts/?feedView=all"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaLinkedin />
-          </a>
+              <a
+                href="https://www.youtube.com/mexicointech"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaYoutube />
+              </a>
 
-          <a
-            href="https://www.youtube.com/mexicointech"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaYoutube />
-          </a>
+              <a
+                href="https://x.com/mxintech"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaTwitter />
+              </a>
 
-          <a
-            href="https://x.com/mxintech"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaTwitter />
-          </a>
+              <a
+                href="https://www.tiktok.com/mxintech"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaTiktok />
+              </a>
 
-          <a
-            href="https://www.tiktok.com/mxintech"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaTiktok />
-          </a>
-
-          <a
-            href="https://www.twitch.tv/mxintech"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaTwitch />
-          </a>
+              <a
+                href="https://www.twitch.tv/mxintech"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaTwitch />
+              </a>
+            </div>
+          </div>
         </div>
       </footer>
     </div>

@@ -7,9 +7,9 @@ import slide3 from "./assets/slide3.jpg";
 
 const Slider = () => {
   const slides = [
-    { id: 1, url: slide1, caption: "Bienvenido a México in Tech" },
-    { id: 2, url: slide2, caption: "Potencia tu carrera uniendote a México in Tech" },
-    { id: 3, url: slide3, caption: "Algo" },
+    { id: 1, url: slide1, caption: "Aprendimos sobre AWS" },
+    { id: 2, url: slide2, caption: "Aprendimos sobre ArgoCD, GitOps, Rollouts" },
+    { id: 3, url: slide3, caption: "Aprendimos sobre Kubernetes" },
   ];
 
   const [current, setCurrent] = useState(0);
@@ -23,7 +23,7 @@ const Slider = () => {
   };
 
   useEffect(() => {
-    const id = setInterval(nextSlide, 5000);
+    const id = setInterval(nextSlide, 10000);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -33,15 +33,13 @@ const Slider = () => {
       <div
         className="slider-frame"
         key={slides[current].id}
-        style={{ backgroundImage: `url(${slides[current].url})` }}
+        style={{ "--slide-image": `url(${slides[current].url})` }}
       >
         <div className="slider-overlay" />
         <div className="slider-welcome-message">
           <h1>México in Tech</h1>
-          <div className="slider-subrow">
-            <h2 className="eyebrow">De Devs para Devs: Compartiendo conocimiento real.</h2>
-            <p className="caption">{slides[current].caption}</p>
-          </div>
+          <h2 className="eyebrow">De Devs para Devs: Compartiendo conocimiento real.</h2>
+          <p className="caption">{slides[current].caption}</p>
         </div>
         <div className="slider-controls">
           <button onClick={prevSlide} className="slider-button" aria-label="Anterior">❮</button>
