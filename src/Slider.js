@@ -37,8 +37,6 @@ const Slider = () => {
       >
         <div className="slider-overlay" />
         <div className="slider-welcome-message">
-          <h1>México in Tech</h1>
-          <h2 className="eyebrow">De Devs para Devs: Compartiendo conocimiento real.</h2>
           <p className="caption">{slides[current].caption}</p>
         </div>
         <div className="slider-controls">

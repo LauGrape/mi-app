@@ -4,22 +4,44 @@ import './App.css';
 import Slider from './Slider';
 import video from './assets/video.mp4';
 import ajolote from './assets/ajolote.png';
-import logo from './assets/logo.png';
 import {
   FaFacebook,
   FaTwitter,
-  FaInstagram,
   FaLinkedin,
   FaYoutube,
   FaTiktok,
-  FaTwitch
+  FaTwitch,
+  FaBook,
+  FaEnvelope,
+  FaMapPin
 } from 'react-icons/fa';
 
 const HomePage = () => (
   <>
     {/* Slider de Bienvenida */}
     <section id="inicio" className="section">
-      <Slider />
+      <div className="hero-layout">
+        <div className="hero-slider">
+          <Slider />
+        </div>
+        <div className="hero-copy">
+          <div className="hero-brand">
+            <img src={ajolote} alt="Ajolote" className="hero-logo" />
+            <span className="hero-brand-name">Mexico in Tech</span>
+          </div>
+          <p className="hero-description">
+            <b>DE DEVS PARA DEVS:</b> Compartiendo conocimiento real, webinars y eventos para impulsar tu carrera.
+          </p>
+          <div className="hero-actions">
+            <Link to="/contact" className="hero-button hero-primary">
+              Unete a la comunidad
+            </Link>
+            <a href="/#video" className="hero-button hero-secondary">
+              Ver los próximos eventos
+            </a>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="acercade" className="section acercade-section">
@@ -167,6 +189,36 @@ function App() {
     document.body.setAttribute('data-theme', theme);
   }, [theme]);
 
+  // #region agent log
+  useEffect(() => {
+    if (menuOpen) {
+      const ul = document.querySelector('.nav-links.open');
+      if (ul) {
+        const computed = window.getComputedStyle(ul);
+        const rect = ul.getBoundingClientRect();
+        const links = ul.querySelectorAll('a');
+        const linkStyles = Array.from(links).map((link, idx) => {
+          const linkComputed = window.getComputedStyle(link);
+          const linkRect = link.getBoundingClientRect();
+          return {
+            index: idx,
+            text: link.textContent.trim(),
+            background: linkComputed.backgroundColor,
+            backgroundImage: linkComputed.backgroundImage,
+            display: linkComputed.display,
+            position: linkComputed.position,
+            width: linkRect.width,
+            height: linkRect.height,
+            top: linkRect.top,
+            left: linkRect.left
+          };
+        });
+        fetch('http://127.0.0.1:7316/ingest/ac451daf-ee5f-455d-be97-c0df8640708d',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'772a59'},body:JSON.stringify({sessionId:'772a59',runId:'menu-open',hypothesisId:'A,B,C,D,E',location:'App.js:189',message:'Menu opened - checking ul styles',data:{ul:{background:computed.backgroundColor,backgroundImage:computed.backgroundImage,display:computed.display,position:computed.position,width:rect.width,height:rect.height,boxShadow:computed.boxShadow,zIndex:computed.zIndex,padding:computed.padding,gap:computed.gap},links:linkStyles},timestamp:Date.now()})}).catch(()=>{});
+      }
+    }
+  }, [menuOpen]);
+  // #endregion
+
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
@@ -184,24 +236,30 @@ function App() {
       {/* Barra de navegación */}
       <header className="header">
         <nav className="nav">
-          <div className="nav-logo">
-            {/* Reemplazamos el <h1> por la imagen */}
-            <img src={logo} alt="México in Tech" className="logo" />
+          <div className="nav-col nav-col-left">
+            <div className="nav-logo">
+              <img src={ajolote} alt="Mexico in Tech" className="nav-logo-icon" />
+              <span className="nav-logo-text">Mexico in Tech</span>
+            </div>
           </div>
 
-          {/* Botón hamburguesa */}
-          <button className="hamburger" onClick={toggleMenu}>
-            ☰
-          </button>
+          <div className="nav-col nav-col-right">
+            <div className="nav-actions">
+              {/* Botón hamburguesa */}
+              <button className="hamburger" onClick={toggleMenu}>
+                ☰
+              </button>
 
-          {/* Enlaces del menú */}
-          <ul className={`nav-links ${menuOpen ? 'open' : ''}`}>
-            <li><Link to="/" onClick={closeMenu}>Inicio</Link></li>
-            <li><a href="/#acercade" onClick={closeMenu}>Acerca de</a></li>
-            <li><a href="/#video" onClick={closeMenu}>Webinars</a></li>
-            <li><Link to="/cursos" onClick={closeMenu}>Cursos</Link></li>
-            <li><Link to="/contact" onClick={closeMenu}>Contacto</Link></li>
-          </ul>
+              {/* Enlaces del menú */}
+              <ul className={`nav-links ${menuOpen ? 'open' : ''}`}>
+                <li><Link to="/" onClick={closeMenu}>Inicio</Link></li>
+                <li><a href="/#acercade" onClick={closeMenu}>Acerca de</a></li>
+                <li><a href="/#video" onClick={closeMenu}>Webinars</a></li>
+                <li><Link to="/cursos" onClick={closeMenu}>Cursos</Link></li>
+                <li><Link to="/contact" onClick={closeMenu}>Contacto</Link></li>
+              </ul>
+            </div>
+          </div>
         </nav>
       </header>
 
@@ -221,69 +279,94 @@ function App() {
       {/* Footer */}
       <footer className="footer">
         <div className="footer-content">
-          <div className="footer-col">
-            <img src={ajolote} alt="Ajolote" className="footer-logo" />
-            <h3>Mexico in Tech</h3>
+          <div className="footer-col footer-col-brand">
+            <div className="footer-brand-header">
+              <img src={ajolote} alt="Ajolote" className="footer-logo" />
+              <h3>Mexico in Tech</h3>
+            </div>
+            <p>Compartiendo conocimiento real, webinars y eventos para impulsar tu carrera.</p>
+            <p className="footer-location">
+              <FaMapPin className="footer-location-icon" aria-hidden />
+              <span>  Desde Tlaxcala, México.</span>
+            </p>
           </div>
-          <div className="footer-col">
+          <div className="footer-col footer-col-links">
             <h3>Links</h3>
-            <ul>
-              <li><Link to="/cursos">Cursos</Link></li>
-              <li><Link to="/contact">Contacto</Link></li>
+            <ul className="footer-links">
+              <li>
+                <Link to="/cursos" className="footer-link">
+                  <FaBook className="footer-link-icon" aria-hidden />
+                  <span>Cursos</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="footer-link">
+                  <FaEnvelope className="footer-link-icon" aria-hidden />
+                  <span>Contacto</span>
+                </Link>
+              </li>
             </ul>
           </div>
-          <div className="footer-col">
-            <h3>Siguenos</h3>
-            <div className="social-icons">
-              <a
-                href="https://www.facebook.com/mxintech/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FaFacebook />
-              </a>
-
-              <a
-                href="https://www.linkedin.com/company/mxintech/posts/?feedView=all"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FaLinkedin />
-              </a>
-
-              <a
-                href="https://www.youtube.com/mexicointech"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FaYoutube />
-              </a>
-
-              <a
-                href="https://x.com/mxintech"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FaTwitter />
-              </a>
-
-              <a
-                href="https://www.tiktok.com/mxintech"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FaTiktok />
-              </a>
-
-              <a
-                href="https://www.twitch.tv/mxintech"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FaTwitch />
-              </a>
+          <div className="footer-col footer-col-legal">
+            <div className="footer-social">
+              <h3 className="footer-social-label">Síguenos</h3>
+              <div className="social-icons">
+                <a
+                  href="https://www.facebook.com/mxintech/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook"
+                >
+                  <FaFacebook />
+                </a>
+                <a
+                  href="https://www.linkedin.com/company/mxintech/posts/?feedView=all"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                >
+                  <FaLinkedin />
+                </a>
+                <a
+                  href="https://www.youtube.com/mexicointech"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="YouTube"
+                >
+                  <FaYoutube />
+                </a>
+                <a
+                  href="https://x.com/mxintech"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="X (Twitter)"
+                >
+                  <FaTwitter />
+                </a>
+                <a
+                  href="https://www.tiktok.com/mxintech"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="TikTok"
+                >
+                  <FaTiktok />
+                </a>
+                <a
+                  href="https://www.twitch.tv/mxintech"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Twitch"
+                >
+                  <FaTwitch />
+                </a>
+              </div>
             </div>
           </div>
+        </div>
+        <div className="footer-bottom">
+          <p className="footer-copyright">
+            © Reserved rights 2026. Made by Mexico in Tech.
+          </p>
         </div>
       </footer>
     </div>
