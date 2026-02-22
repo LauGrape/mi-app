@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, Navigate } from 'react-router-dom';
 import './App.css';
 import Slider from './Slider';
+import ContactForm from './ContactForm';
 import video from './assets/video.mp4';
 import ajolote from './assets/ajolote.png';
+import mascota from './assets/mascota.png';
 import {
   FaFacebook,
   FaTwitter,
@@ -13,8 +15,157 @@ import {
   FaTwitch,
   FaBook,
   FaEnvelope,
-  FaMapPin
+  FaMapPin,
+  FaUserPlus,
+  FaUserTie,
+  FaMicrophone,
+  FaHandshake,
+  FaCalendarAlt,
+  FaHome,
+  FaInfoCircle,
+  FaVideo,
+  FaChevronLeft,
+  FaChevronRight,
+  FaCircle,
+  FaRegCircle
 } from 'react-icons/fa';
+
+const ACERCADE_SLIDES = [
+  {
+    title: 'Acerca de México in Tech',
+    id: 'p-acercade',
+    body: 'México in Tech es una comunidad dedicada a fomentar el aprendizaje y la colaboración en el ámbito tecnológico. Ofrecemos cursos, webinars y eventos para ayudar a los profesionales a crecer en sus carreras.'
+  },
+  {
+    title: 'Misión',
+    id: 'p-mision',
+    body: 'Nuestra misión es empoderar a los desarrolladores mexicanos con conocimientos prácticos y reales, compartidos por expertos de la industria. Queremos crear un espacio donde los devs puedan aprender, colaborar y crecer juntos.'
+  },
+  {
+    title: 'Visión',
+    id: 'p-vision',
+    body: 'Ser la comunidad de referencia en México para el aprendizaje y la colaboración tecnológica, impulsando el crecimiento profesional de los desarrolladores y contribuyendo al desarrollo del ecosistema tech en el país.'
+  }
+];
+
+const AcercadeSection = () => {
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(null);
+
+  const goTo = (index) => {
+    setSlideIndex(Math.max(0, Math.min(index, ACERCADE_SLIDES.length - 1)));
+  };
+
+  const goPrev = () => {
+    if (slideIndex === 0) goTo(ACERCADE_SLIDES.length - 1);
+    else goTo(slideIndex - 1);
+  };
+
+  const goNext = () => {
+    if (slideIndex === ACERCADE_SLIDES.length - 1) goTo(0);
+    else goTo(slideIndex + 1);
+  };
+
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStart == null) return;
+    const dx = e.changedTouches[0].clientX - touchStart;
+    const threshold = 50;
+    if (dx > threshold) goPrev();
+    else if (dx < -threshold) goNext();
+    setTouchStart(null);
+  };
+
+  return (
+    <section id="acercade" className="section acercade-section">
+      <div className="acercade-pet-row">
+        <div className="acercade-pet-container">
+          <img src={mascota} alt="Mascota de México in Tech" className="acercade-mascota" />
+        </div>
+      </div>
+      <div className="acercade-slider-row">
+        <div className="acercade-slider-wrapper">
+          <div
+            className="acercade-slider-viewport acercade-slider-cols"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            role="region"
+            aria-label="Contenido Acerca de - desliza para cambiar"
+          >
+            {/* Left 10%: peek of previous (wrap: when index 0, previous = last) */}
+            <div className="acercade-col acercade-col-prev">
+              <div className="acercade-slide-box-wrap">
+                <div className="acercade-slide-box">
+                  <h4>{ACERCADE_SLIDES[(slideIndex - 1 + ACERCADE_SLIDES.length) % ACERCADE_SLIDES.length].title}</h4>
+                  <p id={`${ACERCADE_SLIDES[(slideIndex - 1 + ACERCADE_SLIDES.length) % ACERCADE_SLIDES.length].id}-prev`}>
+                    {ACERCADE_SLIDES[(slideIndex - 1 + ACERCADE_SLIDES.length) % ACERCADE_SLIDES.length].body}
+                  </p>
+                </div>
+              </div>
+            </div>
+            {/* Center 80%: current slide */}
+            <div className="acercade-col acercade-col-center">
+              <div className="acercade-slide-box">
+                <h4>{ACERCADE_SLIDES[slideIndex].title}</h4>
+                <p id={ACERCADE_SLIDES[slideIndex].id}>{ACERCADE_SLIDES[slideIndex].body}</p>
+              </div>
+            </div>
+            {/* Right 10%: peek of next (wrap: when index last, next = first) */}
+            <div className="acercade-col acercade-col-next">
+              <div className="acercade-slide-box-wrap">
+                <div className="acercade-slide-box">
+                  <h4>{ACERCADE_SLIDES[(slideIndex + 1) % ACERCADE_SLIDES.length].title}</h4>
+                  <p id={`${ACERCADE_SLIDES[(slideIndex + 1) % ACERCADE_SLIDES.length].id}-next`}>
+                    {ACERCADE_SLIDES[(slideIndex + 1) % ACERCADE_SLIDES.length].body}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="acercade-slider-footer">
+          <div className="acercade-slider-nav">
+            <button
+              type="button"
+              className="acercade-slider-arrow acercade-slider-prev"
+              onClick={goPrev}
+              aria-label="Anterior"
+            >
+              <FaChevronLeft />
+            </button>
+            <div className="acercade-slider-dots" role="tablist" aria-label="Sección del contenido">
+              {ACERCADE_SLIDES.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === slideIndex}
+                  aria-label={`Ir a sección ${i + 1}`}
+                  className={`acercade-dot ${i === slideIndex ? 'acercade-dot--active' : ''}`}
+                  onClick={() => goTo(i)}
+                >
+                  {i === slideIndex ? <FaCircle /> : <FaRegCircle />}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="acercade-slider-arrow acercade-slider-next"
+              onClick={goNext}
+              aria-label="Siguiente"
+            >
+              <FaChevronRight />
+            </button>
+          </div>
+          <p className="acercade-swipe-hint">Desliza o usa las flechas para ver más</p>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 const HomePage = () => (
   <>
@@ -33,7 +184,7 @@ const HomePage = () => (
             <b>DE DEVS PARA DEVS:</b> Compartiendo conocimiento real, webinars y eventos para impulsar tu carrera.
           </p>
           <div className="hero-actions">
-            <Link to="/contact" className="hero-button hero-primary">
+            <Link to="/contact/member" className="hero-button hero-primary">
               Unete a la comunidad
             </Link>
             <a href="/#video" className="hero-button hero-secondary">
@@ -44,39 +195,105 @@ const HomePage = () => (
       </div>
     </section>
 
-    <section id="acercade" className="section acercade-section">
-      <div className="acercade-block">
-        <h2>Acerca de México in Tech</h2>
-        <p id="p-acercade">
-          México in Tech es una comunidad dedicada a fomentar el aprendizaje
-          y la colaboración en el ámbito tecnológico. Ofrecemos cursos,
-          webinars y eventos para ayudar a los profesionales a crecer en sus
-          carreras.
-        </p>
+    <AcercadeSection />
+
+    {/* Webinars */}
+    <section id="video" className="section webinars-section">
+      <h2>Webinars</h2>
+      <div className="webinars-grid">
+        <a
+          href="https://youtube.com/live/GoTTYOpzvRg"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="webinar-card"
+        >
+          <div className="webinar-thumbnail">
+            <img
+              src="https://img.youtube.com/vi/GoTTYOpzvRg/maxresdefault.jpg"
+              alt="Webinar 1"
+              onError={(e) => {
+                e.target.src = `https://img.youtube.com/vi/GoTTYOpzvRg/hqdefault.jpg`;
+              }}
+            />
+            <div className="webinar-play-overlay">
+              <FaYoutube className="play-icon" />
+            </div>
+          </div>
+        </a>
+        <a
+          href="https://youtube.com/live/0Kf2v6D1ApI?feature=share"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="webinar-card"
+        >
+          <div className="webinar-thumbnail">
+            <img
+              src="https://img.youtube.com/vi/0Kf2v6D1ApI/maxresdefault.jpg"
+              alt="Webinar 2"
+              onError={(e) => {
+                e.target.src = `https://img.youtube.com/vi/0Kf2v6D1ApI/hqdefault.jpg`;
+              }}
+            />
+            <div className="webinar-play-overlay">
+              <FaYoutube className="play-icon" />
+            </div>
+          </div>
+        </a>
+        <a
+          href="https://youtube.com/live/JlF9ey7S9dI?feature=share"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="webinar-card"
+        >
+          <div className="webinar-thumbnail">
+            <img
+              src="https://img.youtube.com/vi/JlF9ey7S9dI/maxresdefault.jpg"
+              alt="Webinar 3"
+              onError={(e) => {
+                e.target.src = `https://img.youtube.com/vi/JlF9ey7S9dI/hqdefault.jpg`;
+              }}
+            />
+            <div className="webinar-play-overlay">
+              <FaYoutube className="play-icon" />
+            </div>
+          </div>
+        </a>
+        <a
+          href="https://youtube.com/live/4qtKxMpkPsk?feature=share"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="webinar-card"
+        >
+          <div className="webinar-thumbnail">
+            <img
+              src="https://img.youtube.com/vi/4qtKxMpkPsk/maxresdefault.jpg"
+              alt="Webinar 4"
+              onError={(e) => {
+                e.target.src = `https://img.youtube.com/vi/4qtKxMpkPsk/hqdefault.jpg`;
+              }}
+            />
+            <div className="webinar-play-overlay">
+              <FaYoutube className="play-icon" />
+            </div>
+          </div>
+        </a>
       </div>
-      <div className="acercade-block">
-        <h2>Misión</h2>
-        <p id="p-mision">
-          Nuestra misión es empoderar a los desarrolladores mexicanos con
-          conocimientos prácticos y reales, compartidos por expertos de la
-          industria. Queremos crear un espacio donde los devs puedan aprender,
-          colaborar y crecer juntos.
-        </p>
-      </div>
-      <div className="acercade-block">
-        <h2>Visión</h2>
-        <p id="p-vision">
-          Ser la comunidad de referencia en México para el aprendizaje y la
-          colaboración tecnológica, impulsando el crecimiento profesional de los
-          desarrolladores y contribuyendo al desarrollo del ecosistema tech en
-          el país.
-        </p>
+      <div className="webinars-subscribe">
+        <a
+          href="https://www.youtube.com/mexicointech"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="subscribe-button"
+        >
+          <FaYoutube className="subscribe-icon" />
+          <span>Suscríbete al canal</span>
+        </a>
       </div>
     </section>
 
-    {/* Video */}
-    <section id="video" className="section">
-      <h2>Webinars</h2>
+    {/* Eventos */}
+    <section id="eventos" className="section eventos-section">
+      <h2>Eventos</h2>
       <div className="video-box">
         <video controls>
           <source src={video} type="video/mp4" />
@@ -87,54 +304,91 @@ const HomePage = () => (
   </>
 );
 
-const ContactPage = () => (
+// Contact Pages for different types
+const MemberContactPage = () => (
   <section id="contacto" className="section contact-section">
     <div className="contact-grid">
       <div className="contact-copy">
-      <h2>Contáctanos</h2>
-      <p>Nos encantaría colaborar contigo.</p>
-      <ul>
-        <li>¿Te gustaría compartir con la comunidad?</li>   
-        <li>Invítanos a tus eventos. Nos encantaría participar</li>
-      </ul>
+        <h2>Únete a nuestra comunidad</h2>
+        <p>Conviértete en miembro de México in Tech y accede a:</p>
+        <ul>
+          <li>Eventos y webinars exclusivos</li>
+          <li>Notificaciones sobre nuevos cursos y talleres</li>
+          <li>Red de networking con otros desarrolladores</li>
+          <li>Recursos y materiales de aprendizaje</li>
+        </ul>
+      </div>
+      <ContactForm
+        contactType="member"
+        title="Solicitud de membresía"
+        description="Completa el formulario para unirte a nuestra comunidad"
+      />
     </div>
-      <form className="contact-form">
-        <h4>Envíanos un mensaje</h4>
-      <div className="form-group">
-        <label htmlFor="nombre">Nombre:</label>
-        <input
-          type="text"
-          id="nombre"
-          name="nombre"
-          placeholder="Tu nombre"
-          required
-        />
-      </div>
+  </section>
+);
 
-      <div className="form-group">
-        <label htmlFor="email">Correo electrónico:</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          placeholder="juan@gmail.com"
-          required
-        />
+const LeaderContactPage = () => (
+  <section id="contacto" className="section contact-section">
+    <div className="contact-grid">
+      <div className="contact-copy">
+        <h2>Lidera el crecimiento</h2>
+        <p>¿Quieres ser parte del equipo que organiza eventos y lidera el crecimiento de la comunidad?</p>
+        <ul>
+          <li>Organiza eventos y meetups</li>
+          <li>Lidera iniciativas de crecimiento comunitario</li>
+          <li>Colabora en la estrategia de la comunidad</li>
+          <li>Ayuda a otros desarrolladores a crecer</li>
+        </ul>
       </div>
+      <ContactForm
+        contactType="leader"
+        title="Solicitud para ser líder"
+        description="Comparte con nosotros tu interés en liderar la comunidad"
+      />
+    </div>
+  </section>
+);
 
-      <div className="form-group">
-        <label htmlFor="mensaje">Mensaje:</label>
-        <textarea
-          id="mensaje"
-          name="mensaje"
-          rows="5"
-          placeholder="Escribe tu mensaje..."
-          required
-        ></textarea>
+const SpeakerContactPage = () => (
+  <section id="contacto" className="section contact-section">
+    <div className="contact-grid">
+      <div className="contact-copy">
+        <h2>Comparte tu conocimiento</h2>
+        <p>¿Tienes experiencia y quieres compartirla con la comunidad?</p>
+        <ul>
+          <li>Da charlas y talleres ocasionales</li>
+          <li>Comparte tu experiencia técnica</li>
+          <li>Ayuda a otros a aprender</li>
+          <li>Colabora en eventos y webinars</li>
+        </ul>
       </div>
+      <ContactForm
+        contactType="speaker"
+        title="Solicitud para ser speaker"
+        description="Cuéntanos sobre ti y los temas que te gustaría compartir"
+      />
+    </div>
+  </section>
+);
 
-      <button type="submit">Enviar Mensaje</button>
-    </form>
+const BusinessContactPage = () => (
+  <section id="contacto" className="section contact-section">
+    <div className="contact-grid">
+      <div className="contact-copy">
+        <h2>Patrocina la comunidad</h2>
+        <p>¿Tu empresa quiere apoyar el crecimiento de la comunidad tech en México?</p>
+        <ul>
+          <li>Patrocinio de eventos y webinars</li>
+          <li>Colaboraciones estratégicas</li>
+          <li>Oportunidades de networking</li>
+          <li>Apoyo al ecosistema tech mexicano</li>
+        </ul>
+      </div>
+      <ContactForm
+        contactType="business"
+        title="Solicitud de patrocinio"
+        description="Hablemos sobre cómo podemos colaborar juntos"
+      />
     </div>
   </section>
 );
@@ -189,36 +443,6 @@ function App() {
     document.body.setAttribute('data-theme', theme);
   }, [theme]);
 
-  // #region agent log
-  useEffect(() => {
-    if (menuOpen) {
-      const ul = document.querySelector('.nav-links.open');
-      if (ul) {
-        const computed = window.getComputedStyle(ul);
-        const rect = ul.getBoundingClientRect();
-        const links = ul.querySelectorAll('a');
-        const linkStyles = Array.from(links).map((link, idx) => {
-          const linkComputed = window.getComputedStyle(link);
-          const linkRect = link.getBoundingClientRect();
-          return {
-            index: idx,
-            text: link.textContent.trim(),
-            background: linkComputed.backgroundColor,
-            backgroundImage: linkComputed.backgroundImage,
-            display: linkComputed.display,
-            position: linkComputed.position,
-            width: linkRect.width,
-            height: linkRect.height,
-            top: linkRect.top,
-            left: linkRect.left
-          };
-        });
-        fetch('http://127.0.0.1:7316/ingest/ac451daf-ee5f-455d-be97-c0df8640708d',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'772a59'},body:JSON.stringify({sessionId:'772a59',runId:'menu-open',hypothesisId:'A,B,C,D,E',location:'App.js:189',message:'Menu opened - checking ul styles',data:{ul:{background:computed.backgroundColor,backgroundImage:computed.backgroundImage,display:computed.display,position:computed.position,width:rect.width,height:rect.height,boxShadow:computed.boxShadow,zIndex:computed.zIndex,padding:computed.padding,gap:computed.gap},links:linkStyles},timestamp:Date.now()})}).catch(()=>{});
-      }
-    }
-  }, [menuOpen]);
-  // #endregion
-
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
@@ -252,11 +476,32 @@ function App() {
 
               {/* Enlaces del menú */}
               <ul className={`nav-links ${menuOpen ? 'open' : ''}`}>
-                <li><Link to="/" onClick={closeMenu}>Inicio</Link></li>
-                <li><a href="/#acercade" onClick={closeMenu}>Acerca de</a></li>
-                <li><a href="/#video" onClick={closeMenu}>Webinars</a></li>
-                <li><Link to="/cursos" onClick={closeMenu}>Cursos</Link></li>
-                <li><Link to="/contact" onClick={closeMenu}>Contacto</Link></li>
+                <li>
+                  <Link to="/" onClick={closeMenu} className="nav-link-item">
+                    <FaHome className="nav-link-icon" aria-hidden />
+                    <span>Inicio</span>
+                  </Link>
+                </li>
+                <li>
+                  <a href="/#acercade" onClick={closeMenu} className="nav-link-item">
+                    <FaInfoCircle className="nav-link-icon" aria-hidden />
+                    <span>Acerca de</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="/#video" onClick={closeMenu} className="nav-link-item">
+                    <FaVideo className="nav-link-icon" aria-hidden />
+                    <span>Webinars</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="/#eventos" onClick={closeMenu} className="nav-link-item">
+                    <FaCalendarAlt className="nav-link-icon" aria-hidden />
+                    <span>Eventos</span>
+                  </a>
+                </li>
+                {/*<li><Link to="/cursos" onClick={closeMenu}>Cursos</Link></li>*/}
+                {/*<li><Link to="/contact" onClick={closeMenu}>Contacto</Link></li>*/}
               </ul>
             </div>
           </div>
@@ -272,7 +517,11 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/cursos" element={<CursosPage />} />
-          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/contact" element={<Navigate to="/contact/member" replace />} />
+          <Route path="/contact/member" element={<MemberContactPage />} />
+          <Route path="/contact/leader" element={<LeaderContactPage />} />
+          <Route path="/contact/speaker" element={<SpeakerContactPage />} />
+          <Route path="/contact/business" element={<BusinessContactPage />} />
         </Routes>
       </main>
 
@@ -300,9 +549,27 @@ function App() {
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="footer-link">
-                  <FaEnvelope className="footer-link-icon" aria-hidden />
-                  <span>Contacto</span>
+                <Link to="/contact/member" className="footer-link">
+                  <FaUserPlus className="footer-link-icon" aria-hidden />
+                  <span>Conviértete en miembro</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact/leader" className="footer-link">
+                  <FaUserTie className="footer-link-icon" aria-hidden />
+                  <span>Sé un líder</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact/speaker" className="footer-link">
+                  <FaMicrophone className="footer-link-icon" aria-hidden />
+                  <span>Sé un speaker</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact/business" className="footer-link">
+                  <FaHandshake className="footer-link-icon" aria-hidden />
+                  <span>Patrocinio empresarial</span>
                 </Link>
               </li>
             </ul>

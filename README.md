@@ -68,3 +68,52 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## API Configuration
+
+This application uses an API Gateway backend for contact form submissions. To configure the API endpoint:
+
+1. Deploy the CloudFormation template located in `infra/template.yaml`:
+   ```bash
+   aws cloudformation create-stack \
+     --stack-name mxintech-contact-api \
+     --template-body file://infra/template.yaml \
+     --parameters \
+       ParameterKey=SesIdentityArn,ParameterValue=arn:aws:ses:region:account:identity/your-domain \
+       ParameterKey=ApiDomainName,ParameterValue=mxintech.org \
+       ParameterKey=HostedZoneId,ParameterValue=Z1234567890ABC
+   ```
+
+2. After deployment, get the API endpoint from CloudFormation outputs:
+   ```bash
+   aws cloudformation describe-stacks \
+     --stack-name mxintech-contact-api \
+     --query 'Stacks[0].Outputs[?OutputKey==`ApiEndpoint`].OutputValue' \
+     --output text
+   ```
+
+3. Create a `.env` file in the project root (copy from `.env.example`):
+   ```bash
+   cp .env.example .env
+   ```
+
+4. Update `.env` with your API endpoint:
+   ```
+   REACT_APP_API_ENDPOINT=https://your-api-id.execute-api.region.amazonaws.com/prod
+   ```
+   Or if using custom domain:
+   ```
+   REACT_APP_API_ENDPOINT=https://api.mxintech.org
+   ```
+
+5. Restart the development server for changes to take effect.
+
+## Contact Forms
+
+The application includes 4 different contact forms:
+- **Member** (`/contact/member`): Join the community and receive event notifications
+- **Leader** (`/contact/leader`): Become a community leader and organize events
+- **Speaker** (`/contact/speaker`): Share knowledge through talks and workshops
+- **Business** (`/contact/business`): Sponsor the community or establish business relations
+
+All forms submit to the same API Gateway endpoint with a `contactType` field to differentiate submission types.

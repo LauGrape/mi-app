@@ -30,6 +30,19 @@
   z-index: 0;
 }
 
+@media (max-width: 768px) {
+  .slider-frame::before {
+    background-size: cover;
+    background-position: center center;
+  }
+}
+
+@media (max-width: 480px) {
+  .slider-frame::before {
+    background-position: center 30%;
+  }
+}
+
 .slider-overlay {
   position: absolute;
   text-align: left;
@@ -40,12 +53,13 @@
 
 .slider-welcome-message {
   position: absolute;
-  inset: auto auto clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 3rem);
+  left: clamp(1rem, 4vw, 3rem);
+  right: clamp(1rem, 4vw, 3rem);
+  bottom: clamp(4rem, 12vw, 5rem);
   z-index: 2;
   text-align: left;
   color: #fff;
-  /*padding: 1rem 1.5rem;*/
-  max-width: 720px;
+  max-width: min(720px, 90vw);
 }
 /*
 .slider-welcome-message,
@@ -65,22 +79,20 @@
 }*/
 
 .slider-welcome-message .caption {
-  font-size: clamp(1rem, 2vw, 1.4rem);
-  /*margin: 0.5rem 0 0;*/
+  font-size: clamp(0.875rem, 2vw, 1.4rem);
+  line-height: 1.4;
   color: #fff;
-  /*text-shadow:
-    0 1px 2px rgba(255,255,255,1),
-    0 0 8px rgba(255,255,255,1);*/
+  margin: 0;
 }
 
 .slider-controls {
   position: absolute;
-  bottom: 2rem;
-  right: 1rem;
+  bottom: clamp(1rem, 4vw, 2rem);
+  right: clamp(0.75rem, 2vw, 1rem);
   left: auto;
   transform: none;
   display: flex;
-  gap: 0.75rem;
+  gap: clamp(0.5rem, 1.5vw, 0.75rem);
   z-index: 2;
 }
 
@@ -88,10 +100,12 @@
   background: rgba(0,0,0,0.45);
   border: 1px solid rgba(255,255,255,0.6);
   color: #fff;
-  font-size: 1.25rem;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
   border-radius: 999px;
-  width: 48px;
-  height: 48px;
+  width: clamp(40px, 10vw, 48px);
+  height: clamp(40px, 10vw, 48px);
+  min-width: 40px;
+  min-height: 40px;
   display: grid;
   place-items: center;
   cursor: pointer;
@@ -107,17 +121,17 @@
 
 .slider-dots {
   position: absolute;
-  bottom: 1rem;
+  bottom: clamp(0.75rem, 2.5vw, 1rem);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 0.5rem;
+  gap: clamp(0.35rem, 1vw, 0.5rem);
   z-index: 2;
 }
 
 .slider-dot {
-  width: 44px;
-  height: 6px;
+  width: clamp(28px, 8vw, 44px);
+  height: clamp(5px, 1.2vw, 6px);
   border-radius: 999px;
   background: rgba(255,255,255,0.35);
   border: none;
@@ -130,36 +144,57 @@
   transform: translateY(-1px);
 }
 
-@media (max-width: 768px) {
-  .slider-hero,
-  .slider-frame {
-    min-height: 70vh;
-  }
-
+@media (max-width: 900px) {
   .slider-welcome-message {
-    inset: auto 1rem 1rem 1rem;
-    /*padding: 0.75rem 1rem;*/
+    left: clamp(1rem, 4vw, 1.5rem);
+    right: clamp(1rem, 4vw, 1.5rem);
+    bottom: clamp(4.5rem, 14vw, 6rem);
   }
 
   .slider-welcome-message .caption {
-    font-size: clamp(0.95rem, 3.5vw, 1.2rem);
+    font-size: clamp(0.85rem, 3vw, 1.15rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .slider-welcome-message {
+    left: clamp(0.75rem, 3vw, 1rem);
+    right: clamp(0.75rem, 3vw, 1rem);
+    bottom: clamp(4rem, 13vw, 5.5rem);
   }
 
-  .slider-controls {
-    bottom: 1.25rem;
+  .slider-welcome-message .caption {
+    font-size: clamp(0.8rem, 3.5vw, 1.1rem);
   }
 
   .slider-dots {
-    bottom: 3.25rem;
+    bottom: clamp(3rem, 12vw, 3.5rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .slider-welcome-message {
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: clamp(3.75rem, 14vw, 5rem);
+  }
+
+  .slider-welcome-message .caption {
+    font-size: clamp(0.75rem, 4vw, 1rem);
+  }
+
+  .slider-controls {
+    bottom: clamp(0.75rem, 4vw, 1rem);
+  }
+
+  .slider-dots {
+    bottom: clamp(2.75rem, 14vw, 3.25rem);
   }
 
   .slider-button {
-    width: 42px;
-    height: 42px;
-    font-size: 1.1rem;
-  }
-
-  .slider-dot {
-    width: 32px;
+    min-width: 36px;
+    min-height: 36px;
+    width: clamp(36px, 12vw, 42px);
+    height: clamp(36px, 12vw, 42px);
   }
 }

@@ -1,6 +1,7 @@
 /* Theme tokens */
 :root {
   --bg: #ffffff;
+  --bg-gradient: none;
   --text: #ef5980;
   --heading: #1B3F8B;
   --p-text: #1B3F8B;
@@ -15,7 +16,8 @@
 }
 
 [data-theme="dark"] {
-  --bg: #1B3F8B;
+  --bg: rgba(89, 131, 252, 1);
+  --bg-gradient: linear-gradient(211deg, rgba(89, 131, 252, 1) 0%, rgba(27, 63, 139, 1) 100%);
   --text: #ffffff;
   --heading: #ffffff;
   --p-text: #ffffff;
@@ -34,6 +36,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg);
+  background-image: var(--bg-gradient);
   color: var(--text);
 }
 
@@ -58,7 +61,7 @@ html, body {
 .Main-content section {
   margin-bottom: 3rem;
   background: rgb(203, 166, 178);
-  padding: 1.5rem;
+  padding: clamp(0.75rem, 3vw, 1.5rem);
   border-radius: 60px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
