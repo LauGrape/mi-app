@@ -61,6 +61,29 @@
   color: #fff;
   max-width: min(720px, 90vw);
 }
+
+.slider-caption-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.slider-caption-icons .slider-icon {
+  width: 2rem;
+  height: 2rem;
+  color: #fff;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+}
+
+.slider-caption-icons .slider-icon-tada {
+  color: #ffd700;
+}
+
+.slider-caption-icons .slider-icon-aws {
+  width: 2.25rem;
+  height: 2.25rem;
+}
 /*
 .slider-welcome-message,
 .slider-welcome-message * {

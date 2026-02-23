@@ -7,14 +7,22 @@
   --header-height: 70px;
 }
 
+/* Animated gradient border (--rotate used by eventos-card-1) */
+@property --rotate {
+  syntax: "<angle>";
+  initial-value: 132deg;
+  inherits: false;
+}
+
 body {
   background-color: var(--bg);
   color: var(--text);
 }
 
 /* Secciones generales */
+/* Secciones generales */
 .section {
-  padding: clamp(1.25rem, 5vw, 4rem) 1rem clamp(1.5rem, 4vw, 2.5rem);
+  /*padding: clamp(1.25rem, 5vw, 4rem) 1rem clamp(1.5rem, 4vw, 2.5rem);*/
   max-width: 1080px;
   margin: auto;
   min-height: calc(100vh - var(--header-height));
@@ -26,6 +34,36 @@ body {
 .section h2 {
   text-align: center;
   margin-bottom: 1.5rem;
+}
+
+/* Mobile and tablet: disable scroll-snap for natural scrolling (e.g. iPad 810px) */
+@media (max-width: 900px) {
+  .section {
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
+    height: auto;
+    min-height: 0;
+  }
+
+  #inicio {
+    height: auto;
+    min-height: 0;
+  }
+
+  section.webinars-section,
+  .webinars-section {
+    min-height: 0;
+  }
+
+  section.eventos-section,
+  .eventos-section {
+    min-height: 0;
+  }
+
+  .footer {
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
+  }
 }
 
 /* Acercade: 1 column, 2 rows — pet + box slider; max-height 1080px - header */
@@ -135,6 +173,13 @@ section.acercade-section {
 .acercade-col-next {
   overflow: hidden;
   position: relative;
+  opacity: 0.78;
+  transition: opacity 0.25s ease;
+}
+
+.acercade-col-prev:hover,
+.acercade-col-next:hover {
+  opacity: 0.92;
 }
 
 .acercade-col-center {
@@ -171,12 +216,27 @@ section.acercade-section {
   flex-shrink: 0;
   height: 100%;
   min-height: 100%;
+  transition: filter 0.25s ease;
+  filter: blur(0.4px); /* subtle blur so center stands out */
 }
 
 .acercade-col-center .acercade-slide-box {
   flex: 1 1 auto;
   min-width: 0;
   width: 100%;
+  animation: acercadeFadeScaleIn 0.32s ease-out;
+}
+
+/* Swipe effect: center box fades in and scales up when slide changes */
+@keyframes acercadeFadeScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .acercade-slide-box {
@@ -206,6 +266,7 @@ section.acercade-section {
   line-height: 1.5;
   color: var(--p-text, #1B3F8B);
   overflow-y: auto;
+  white-space: pre-line;
 }
 
 .acercade-slider-footer {
@@ -264,7 +325,8 @@ section.acercade-section {
   section.acercade-section {
     max-height: none;
     height: auto;
-    min-height: calc(100vh - var(--header-height));
+    min-height: 0;
+    overflow: visible;
     grid-template-rows: auto 1fr;
     gap: clamp(0.5rem, 1.5vw, 1rem);
   }
@@ -523,9 +585,13 @@ section.acercade-section {
 }
 
 /* Formulario de contacto */
+section.contact-section,
 .contact-section {
   display: flex;
   justify-content: center;
+  height: auto;
+  min-height: calc(100vh - var(--header-height));
+  overflow: visible;
 }
 
 .contact-grid {
@@ -596,22 +662,46 @@ section.acercade-section {
 }
 
 /* Webinars Section */
+section.webinars-section,
 .webinars-section {
   text-align: center;
+  height: auto;
+  min-height: calc(100vh - var(--header-height));
+  overflow: visible;
+  /*padding-top: clamp(1rem, 2.5vw, 2rem);*/
 }
 
 .webinars-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(224px, 100%), 1fr));
+  gap: clamp(0.8rem, 2vw, 1.6rem);
+  margin-top: clamp(1rem, 2vw, 2rem);
+  margin-bottom: clamp(1rem, 2vw, 2rem);
+  max-width: 880px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 900px) {
+  .webinars-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(256px, 100%), 1fr));
+    gap: 1.4rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .webinars-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.6rem;
+    max-height: 68vh;
+    max-width: 880px;
+  }
 }
 
 .webinar-card {
   display: block;
   text-decoration: none;
-  border-radius: 12px;
+  border-radius: clamp(8px, 1.5vw, 12px);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   background: var(--card-bg);
@@ -647,8 +737,8 @@ section.acercade-section {
   transform: translate(-50%, -50%);
   background: rgba(255, 0, 0, 0.8);
   border-radius: 50%;
-  width: 60px;
-  height: 60px;
+  width: clamp(44px, 5vw, 72px);
+  height: clamp(44px, 5vw, 72px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -662,13 +752,39 @@ section.acercade-section {
 
 .webinar-play-overlay .play-icon {
   color: white;
-  font-size: 1.5rem;
+  font-size: clamp(1rem, 1.5vw, 1.75rem);
 }
 
 .webinars-subscribe {
   display: flex;
   justify-content: center;
   margin-top: 2rem;
+  padding-bottom: 0.5rem;
+}
+
+@media (min-width: 900px) {
+  .webinars-subscribe {
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    flex-shrink: 0;
+  }
+
+  section.webinars-section .webinars-subscribe,
+  .webinars-section .webinars-subscribe {
+    scroll-margin-top: 2rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  section.webinars-section,
+  .webinars-section {
+    padding-bottom: 2.5rem;
+  }
+
+  .webinars-subscribe {
+    margin-top: 2.5rem;
+  }
 }
 
 .subscribe-button {
@@ -696,19 +812,324 @@ section.acercade-section {
   font-size: 1.25rem;
 }
 
-/* Eventos Section */
+/* Webinar cards: smaller on mobile */
+@media (max-width: 557px) {
+  .webinars-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .webinar-card {
+    border-radius: 8px;
+  }
+
+  .webinar-thumbnail {
+    padding-top: 56.25%;
+  }
+
+  .webinar-play-overlay {
+    width: 44px;
+    height: 44px;
+  }
+
+  .webinar-play-overlay .play-icon {
+    font-size: 1.1rem;
+  }
+
+  .webinars-subscribe {
+    margin-top: 1rem;
+  }
+
+  .subscribe-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .subscribe-icon {
+    font-size: 1rem;
+  }
+}
+
+/* Eventos Section: grid 2 cols × 2 rows — video col spans 2 rows, 2 cards in 2nd col */
+section.eventos-section,
 .eventos-section {
+  text-align: center;
+  height: auto;
+  min-height: calc(100vh - var(--header-height));
+  overflow: visible;
+}
+
+/* Tablet/iPad: remove min-height so sections don't force white space (must come after base section rules) */
+@media (max-width: 900px) {
+  section.webinars-section,
+  .webinars-section {
+    min-height: 0;
+    height: auto;
+  }
+
+  section.eventos-section,
+  .eventos-section {
+    min-height: 0;
+    height: auto;
+  }
+
+  section.contact-section,
+  .contact-section {
+    min-height: 0;
+    height: auto;
+  }
+}
+
+.eventos-section h2 {
+  margin-bottom: 1rem;
+}
+
+.eventos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+  align-items: start;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+/* Col 1: video 464×832; scale proportionally on small screens */
+.eventos-video-col {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 0;
+}
+
+.eventos-video-wrap {
+  width: 100%;
+  max-width: 464px;
+  max-height: 580px;
+  aspect-ratio: 464 / 832;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--card-bg, #fff);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.eventos-video-wrap video {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  object-fit: cover;
+  display: block;
+  border: none;
+}
+
+/* Video card header: same look as otros eventos cards */
+.eventos-video-content {
+  padding: clamp(0.75rem, 2vw, 1.25rem);
+  color: var(--p-text, #1B3F8B);
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  line-height: 1.5;
+  flex-shrink: 0;
+}
+
+.eventos-video-content .eventos-card-title {
+  margin: 0;
+}
+
+.eventos-video-content .eventos-date {
+  margin: 0.25rem 0 0;
+}
+
+/* Cards: title + content (video/image/text) */
+.eventos-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: clamp(0.75rem, 2vw, 1.25rem);
+  background: var(--card-bg, #fff);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(27, 63, 139, 0.1);
+  min-height: 0;
+  min-width: 0;
+}
+
+/* Rotating gradient border effect for Próximos eventos card only */
+.eventos-card-1 {
+  position: relative;
+  border: none;
+  overflow: visible;
+}
+
+.eventos-card-1::before {
+  content: "";
+  position: absolute;
+  width: 104%;
+  height: 102%;
+  top: -1%;
+  left: -2%;
+  border-radius: 14px;
+  background-image: linear-gradient(
+    var(--rotate),
+    #5ddcff,
+    #3c67e3 43%,
+    #4e00c2
+  );
+  z-index: -1;
+  animation: eventos-card-spin 2.5s linear infinite;
+}
+
+@keyframes eventos-card-spin {
+  0% {
+    --rotate: 0deg;
+  }
+  100% {
+    --rotate: 360deg;
+  }
+}
+
+.eventos-card-title {
+  margin: 0;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 700;
+  color: #ef5980;
+}
+
+.eventos-card-content {
+  flex: 1;
+  min-height: 0;
+  color: var(--p-text, #1B3F8B);
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  line-height: 1.5;
+}
+
+.eventos-card-content p {
+  margin: 0;
+}
+
+.eventos-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.eventos-date svg {
+  flex-shrink: 0;
+  font-size: 1em;
+  opacity: 0.9;
+}
+
+.eventos-card-content img,
+.eventos-card-content video {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+
+.eventos-card-content video {
+  max-height: 240px;
+}
+
+.eventos-meetup-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: #e51937;
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.15s ease;
+  box-shadow: 0 2px 6px rgba(229, 25, 55, 0.35);
+}
+
+.eventos-meetup-link:hover {
+  background: #c41530;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.eventos-meetup-link:focus-visible {
+  outline: 2px solid #e51937;
+  outline-offset: 2px;
+}
+
+.eventos-meetup-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+/* Eventos responsive: stack on small screens; video scales with 464×832 ratio */
+@media (max-width: 768px) {
+  .eventos-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+
+  .eventos-video-col {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .eventos-video-wrap {
+    width: 100%;
+    max-width: min(464px, 100%);
+    aspect-ratio: 464 / 832;
+    max-height: min(832px, 85vh);
+    margin: 0 auto;
+  }
+
+  .eventos-card-1 {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .eventos-card-2 {
+    grid-column: 1;
+    grid-row: 3;
+  }
+}
+
+/* Video sections (eventos / webinars) */
+#video,
+#eventos {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(239, 96, 121, 0.2);
   text-align: center;
 }
 
-/* Video */
-#video,
-#eventos {
-  background-color: rgb(rgba(239, 96, 121)
-);
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgb(239, 96, 121);
-  text-align: center;
+/* Mobile: prevent webinars and eventos from overlapping (e.g. narrow viewports) */
+@media (max-width: 557px) {
+  section.webinars-section,
+  .webinars-section {
+    /*padding-bottom: clamp(1.25rem, 5vw, 2rem);*/
+  }
+
+  section.eventos-section,
+  .eventos-section {
+    padding-top: clamp(1.25rem, 5vw, 2rem);
+  }
+
+  .Main-content section#video {
+    margin-bottom: 2rem;
+  }
+
+  .Main-content section#eventos {
+    margin-bottom: 2rem;
+  }
 }
 
 video {
@@ -864,6 +1285,17 @@ video {
   min-height: 100%;
 }
 
+.footer-meetup-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+.footer-meetup-link {
+  margin-top: 0;
+}
+
 .footer-col-legal .footer-social {
   flex-grow: 1;
   display: flex;
@@ -992,6 +1424,12 @@ main {
   height: auto;
 }
 
+.nav-logo-icon-aws {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+
 .nav-logo-text {
   font-weight: 700;
   font-size: 0.95rem;
@@ -1000,6 +1438,21 @@ main {
   color: #fff;
   white-space: nowrap;
   line-height: 1;
+}
+
+/* Desktop: show long text, hide short */
+.nav-logo-text-short {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .nav-logo-text-long {
+    display: none;
+  }
+
+  .nav-logo-text-short {
+    display: inline;
+  }
 }
 
 .hamburger {
@@ -1018,7 +1471,7 @@ main {
   flex-direction: row;
   gap: clamp(0.5rem, 2vw, 1rem);
   margin: 0;
-  padding: 0;
+  padding-right: 1rem;
   align-items: center;
   height: 100%;
   background: transparent;
@@ -1060,7 +1513,7 @@ main {
     display: none;
     flex-direction: column;
     gap: clamp(0.35rem, 1.5vw, 0.5rem);
-    padding: clamp(0.5rem, 2vw, 0.75rem);
+    padding: clamp(0.9rem, 2vw, 0.75rem);
     position: absolute;
     top: 100%;
     right: 0;
@@ -1211,6 +1664,13 @@ main {
   /* Hide icons on desktop (768px and up) */
   .nav-link-icon {
     display: none;
+  }
+}
+
+/* iPad / tablet: padding-right on nav links */
+@media (min-width: 768px) and (max-width: 900px) {
+  .nav-links {
+    padding-right: 1.25rem;
   }
 }
 

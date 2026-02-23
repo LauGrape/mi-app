@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Routes, Route, Link, Navigate } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from 'react';
+import { Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import './App.css';
 import Slider from './Slider';
 import ContactForm from './ContactForm';
-import video from './assets/video.mp4';
+import video from './assets/aws-community-day-compat.mp4';
 import ajolote from './assets/ajolote.png';
+import logoAwsUgTlaxcala from './assets/logo-aws-ug-tlaxcala.svg';
 import mascota from './assets/mascota.png';
+import eventosImage from './assets/KCD2026.png';
 import {
   FaFacebook,
   FaTwitter,
@@ -14,7 +16,6 @@ import {
   FaTiktok,
   FaTwitch,
   FaBook,
-  FaEnvelope,
   FaMapPin,
   FaUserPlus,
   FaUserTie,
@@ -29,17 +30,22 @@ import {
   FaCircle,
   FaRegCircle
 } from 'react-icons/fa';
+import { SiMeetup } from 'react-icons/si';
 
 const ACERCADE_SLIDES = [
   {
-    title: 'Acerca de México in Tech',
+    title: 'Acerca de México in Tech | AWS User Group Tlaxcala',
     id: 'p-acercade',
-    body: 'México in Tech es una comunidad dedicada a fomentar el aprendizaje y la colaboración en el ámbito tecnológico. Ofrecemos cursos, webinars y eventos para ayudar a los profesionales a crecer en sus carreras.'
+    body: [
+      'México in Tech es una comunidad dedicada a fomentar el aprendizaje y la colaboración en el ámbito tecnológico.\nSomos oficialmente un ',
+      <strong key="aws-ug">AWS User Group</strong>,
+      '.\nOfrecemos cursos, webinars y eventos para ayudar a los profesionales a crecer en sus carreras.'
+    ]
   },
   {
     title: 'Misión',
     id: 'p-mision',
-    body: 'Nuestra misión es empoderar a los desarrolladores mexicanos con conocimientos prácticos y reales, compartidos por expertos de la industria. Queremos crear un espacio donde los devs puedan aprender, colaborar y crecer juntos.'
+    body: 'Nuestra misión es empoderar a los desarrolladores mexicanos con conocimientos prácticos y reales, compartidos por expertos de la industria.\nQueremos crear un espacio donde los devs puedan aprender, colaborar y crecer juntos.'
   },
   {
     title: 'Visión',
@@ -47,6 +53,13 @@ const ACERCADE_SLIDES = [
     body: 'Ser la comunidad de referencia en México para el aprendizaje y la colaboración tecnológica, impulsando el crecimiento profesional de los desarrolladores y contribuyendo al desarrollo del ecosistema tech en el país.'
   }
 ];
+
+const renderSlideBody = (body) => {
+  if (Array.isArray(body)) {
+    return body.map((item, i) => (typeof item === 'string' ? <span key={i}>{item}</span> : item));
+  }
+  return body;
+};
 
 const AcercadeSection = () => {
   const [slideIndex, setSlideIndex] = useState(0);
@@ -101,16 +114,16 @@ const AcercadeSection = () => {
                 <div className="acercade-slide-box">
                   <h4>{ACERCADE_SLIDES[(slideIndex - 1 + ACERCADE_SLIDES.length) % ACERCADE_SLIDES.length].title}</h4>
                   <p id={`${ACERCADE_SLIDES[(slideIndex - 1 + ACERCADE_SLIDES.length) % ACERCADE_SLIDES.length].id}-prev`}>
-                    {ACERCADE_SLIDES[(slideIndex - 1 + ACERCADE_SLIDES.length) % ACERCADE_SLIDES.length].body}
+                    {renderSlideBody(ACERCADE_SLIDES[(slideIndex - 1 + ACERCADE_SLIDES.length) % ACERCADE_SLIDES.length].body)}
                   </p>
                 </div>
               </div>
             </div>
             {/* Center 80%: current slide */}
             <div className="acercade-col acercade-col-center">
-              <div className="acercade-slide-box">
+              <div key={slideIndex} className="acercade-slide-box">
                 <h4>{ACERCADE_SLIDES[slideIndex].title}</h4>
-                <p id={ACERCADE_SLIDES[slideIndex].id}>{ACERCADE_SLIDES[slideIndex].body}</p>
+                <p id={ACERCADE_SLIDES[slideIndex].id}>{renderSlideBody(ACERCADE_SLIDES[slideIndex].body)}</p>
               </div>
             </div>
             {/* Right 10%: peek of next (wrap: when index last, next = first) */}
@@ -119,7 +132,7 @@ const AcercadeSection = () => {
                 <div className="acercade-slide-box">
                   <h4>{ACERCADE_SLIDES[(slideIndex + 1) % ACERCADE_SLIDES.length].title}</h4>
                   <p id={`${ACERCADE_SLIDES[(slideIndex + 1) % ACERCADE_SLIDES.length].id}-next`}>
-                    {ACERCADE_SLIDES[(slideIndex + 1) % ACERCADE_SLIDES.length].body}
+                    {renderSlideBody(ACERCADE_SLIDES[(slideIndex + 1) % ACERCADE_SLIDES.length].body)}
                   </p>
                 </div>
               </div>
@@ -167,142 +180,188 @@ const AcercadeSection = () => {
   );
 };
 
-const HomePage = () => (
-  <>
-    {/* Slider de Bienvenida */}
-    <section id="inicio" className="section">
-      <div className="hero-layout">
-        <div className="hero-slider">
-          <Slider />
-        </div>
-        <div className="hero-copy">
-          <div className="hero-brand">
-            <img src={ajolote} alt="Ajolote" className="hero-logo" />
-            <span className="hero-brand-name">Mexico in Tech</span>
+const HomePage = () => {
+  const eventosVideoRef = useRef(null);
+
+  return (
+    <>
+      {/* Slider de Bienvenida */}
+      <section id="inicio" className="section">
+        <div className="hero-layout">
+          <div className="hero-slider">
+            <Slider />
           </div>
-          <p className="hero-description">
-            <b>DE DEVS PARA DEVS:</b> Compartiendo conocimiento real, webinars y eventos para impulsar tu carrera.
-          </p>
-          <div className="hero-actions">
-            <Link to="/contact/member" className="hero-button hero-primary">
-              Unete a la comunidad
-            </Link>
-            <a href="/#video" className="hero-button hero-secondary">
-              Ver los próximos eventos
+          <div className="hero-copy">
+            <div className="hero-brand">
+              <img src={ajolote} alt="Ajolote" className="hero-logo" />
+              <span className="hero-brand-name">Mexico in Tech</span>
+            </div>
+            <p className="hero-description">
+              <b>DE DEVS PARA DEVS:</b> Compartiendo conocimiento real, webinars y eventos para impulsar tu carrera.
+            </p>
+            <div className="hero-actions">
+              <Link to="/contact/member" className="hero-button hero-primary">
+                Unete a la comunidad
+              </Link>
+              <a href="/#video" className="hero-button hero-secondary">
+                Ver los próximos eventos
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <AcercadeSection />
+
+      {/* Webinars */}
+      <section id="video" className="section webinars-section">
+        <h2>Webinars</h2>
+        <div className="webinars-grid">
+          <a
+            href="https://youtube.com/live/GoTTYOpzvRg"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="webinar-card"
+          >
+            <div className="webinar-thumbnail">
+              <img
+                src="https://img.youtube.com/vi/GoTTYOpzvRg/maxresdefault.jpg"
+                alt="Webinar 1"
+                onError={(e) => {
+                  e.target.src = `https://img.youtube.com/vi/GoTTYOpzvRg/hqdefault.jpg`;
+                }}
+              />
+              <div className="webinar-play-overlay">
+                <FaYoutube className="play-icon" />
+              </div>
+            </div>
+          </a>
+          <a
+            href="https://youtube.com/live/0Kf2v6D1ApI?feature=share"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="webinar-card"
+          >
+            <div className="webinar-thumbnail">
+              <img
+                src="https://img.youtube.com/vi/0Kf2v6D1ApI/maxresdefault.jpg"
+                alt="Webinar 2"
+                onError={(e) => {
+                  e.target.src = `https://img.youtube.com/vi/0Kf2v6D1ApI/hqdefault.jpg`;
+                }}
+              />
+              <div className="webinar-play-overlay">
+                <FaYoutube className="play-icon" />
+              </div>
+            </div>
+          </a>
+          <a
+            href="https://youtube.com/live/JlF9ey7S9dI?feature=share"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="webinar-card"
+          >
+            <div className="webinar-thumbnail">
+              <img
+                src="https://img.youtube.com/vi/JlF9ey7S9dI/maxresdefault.jpg"
+                alt="Webinar 3"
+                onError={(e) => {
+                  e.target.src = `https://img.youtube.com/vi/JlF9ey7S9dI/hqdefault.jpg`;
+                }}
+              />
+              <div className="webinar-play-overlay">
+                <FaYoutube className="play-icon" />
+              </div>
+            </div>
+          </a>
+          <a
+            href="https://youtube.com/live/4qtKxMpkPsk?feature=share"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="webinar-card"
+          >
+            <div className="webinar-thumbnail">
+              <img
+                src="https://img.youtube.com/vi/4qtKxMpkPsk/maxresdefault.jpg"
+                alt="Webinar 4"
+                onError={(e) => {
+                  e.target.src = `https://img.youtube.com/vi/4qtKxMpkPsk/hqdefault.jpg`;
+                }}
+              />
+              <div className="webinar-play-overlay">
+                <FaYoutube className="play-icon" />
+              </div>
+            </div>
+          </a>
+        </div>
+        <div className="webinars-subscribe">
+          <a
+            href="https://www.youtube.com/mexicointech"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="subscribe-button"
+          >
+            <FaYoutube className="subscribe-icon" />
+            <span>Suscríbete al canal</span>
+          </a>
+        </div>
+      </section>
+
+      {/* Eventos */}
+      <section id="eventos" className="section eventos-section">
+        <h2>Eventos</h2>
+        <div className="eventos-grid">
+          <div className="eventos-video-col">
+            <div className="eventos-video-wrap">
+              <div className="eventos-video-content">
+                <h3 className="eventos-card-title">AWS Community Day</h3>
+                <p className="eventos-date">
+                  <FaCalendarAlt aria-hidden />
+                  14 de Junio de 2025
+                </p>
+              </div>
+              <video
+                ref={eventosVideoRef}
+                controls
+                playsInline
+                onLoadedMetadata={(e) => { e.target.volume = 0.6; }}
+              >
+                <source src={video} type="video/mp4" />
+                Tu navegador no soporta el video.
+              </video>
+            </div>
+          </div>
+        <div className="eventos-card eventos-card-1">
+          <h3 className="eventos-card-title">Próximos eventos</h3>
+          <div className="eventos-card-content">
+            <p>Kubernetes Community Day 2026, Guadalajara</p>
+            <p className="eventos-date">
+              <FaCalendarAlt aria-hidden />
+              28 de febrero de 2026
+            </p>
+            <img src={eventosImage} alt="Kubernetes Community Day 2026, Guadalajara" />
+          </div>
+        </div>
+        <div className="eventos-card eventos-card-2">
+          <h3 className="eventos-card-title">Comunidad</h3>
+          <div className="eventos-card-content">
+            <p>Únete al grupo de AWS, participa en eventos presenciales y en línea, y conecta con más desarrolladores.</p>
+            <a
+              href="https://www.meetup.com/aws-user-group-tlaxcala/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="eventos-meetup-link"
+            >
+              <SiMeetup className="eventos-meetup-icon" aria-hidden />
+              <span>Unirse en Meetup</span>
             </a>
           </div>
         </div>
       </div>
     </section>
-
-    <AcercadeSection />
-
-    {/* Webinars */}
-    <section id="video" className="section webinars-section">
-      <h2>Webinars</h2>
-      <div className="webinars-grid">
-        <a
-          href="https://youtube.com/live/GoTTYOpzvRg"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="webinar-card"
-        >
-          <div className="webinar-thumbnail">
-            <img
-              src="https://img.youtube.com/vi/GoTTYOpzvRg/maxresdefault.jpg"
-              alt="Webinar 1"
-              onError={(e) => {
-                e.target.src = `https://img.youtube.com/vi/GoTTYOpzvRg/hqdefault.jpg`;
-              }}
-            />
-            <div className="webinar-play-overlay">
-              <FaYoutube className="play-icon" />
-            </div>
-          </div>
-        </a>
-        <a
-          href="https://youtube.com/live/0Kf2v6D1ApI?feature=share"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="webinar-card"
-        >
-          <div className="webinar-thumbnail">
-            <img
-              src="https://img.youtube.com/vi/0Kf2v6D1ApI/maxresdefault.jpg"
-              alt="Webinar 2"
-              onError={(e) => {
-                e.target.src = `https://img.youtube.com/vi/0Kf2v6D1ApI/hqdefault.jpg`;
-              }}
-            />
-            <div className="webinar-play-overlay">
-              <FaYoutube className="play-icon" />
-            </div>
-          </div>
-        </a>
-        <a
-          href="https://youtube.com/live/JlF9ey7S9dI?feature=share"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="webinar-card"
-        >
-          <div className="webinar-thumbnail">
-            <img
-              src="https://img.youtube.com/vi/JlF9ey7S9dI/maxresdefault.jpg"
-              alt="Webinar 3"
-              onError={(e) => {
-                e.target.src = `https://img.youtube.com/vi/JlF9ey7S9dI/hqdefault.jpg`;
-              }}
-            />
-            <div className="webinar-play-overlay">
-              <FaYoutube className="play-icon" />
-            </div>
-          </div>
-        </a>
-        <a
-          href="https://youtube.com/live/4qtKxMpkPsk?feature=share"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="webinar-card"
-        >
-          <div className="webinar-thumbnail">
-            <img
-              src="https://img.youtube.com/vi/4qtKxMpkPsk/maxresdefault.jpg"
-              alt="Webinar 4"
-              onError={(e) => {
-                e.target.src = `https://img.youtube.com/vi/4qtKxMpkPsk/hqdefault.jpg`;
-              }}
-            />
-            <div className="webinar-play-overlay">
-              <FaYoutube className="play-icon" />
-            </div>
-          </div>
-        </a>
-      </div>
-      <div className="webinars-subscribe">
-        <a
-          href="https://www.youtube.com/mexicointech"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="subscribe-button"
-        >
-          <FaYoutube className="subscribe-icon" />
-          <span>Suscríbete al canal</span>
-        </a>
-      </div>
-    </section>
-
-    {/* Eventos */}
-    <section id="eventos" className="section eventos-section">
-      <h2>Eventos</h2>
-      <div className="video-box">
-        <video controls>
-          <source src={video} type="video/mp4" />
-          Tu navegador no soporta el video.
-        </video>
-      </div>
-    </section>
   </>
-);
+  );
+};
 
 // Contact Pages for different types
 const MemberContactPage = () => (
@@ -424,6 +483,7 @@ const CursosPage = () => (
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState('light');
+  const location = useLocation();
 
   useEffect(() => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -442,6 +502,16 @@ function App() {
     document.documentElement.setAttribute('data-theme', theme);
     document.body.setAttribute('data-theme', theme);
   }, [theme]);
+
+  /* Scroll to hash (e.g. #inicio) when navigating from another route */
+  useEffect(() => {
+    if (location.pathname !== '/' || !location.hash) return;
+    const id = location.hash.slice(1);
+    const el = id ? document.getElementById(id) : null;
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [location.pathname, location.hash]);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -463,7 +533,9 @@ function App() {
           <div className="nav-col nav-col-left">
             <div className="nav-logo">
               <img src={ajolote} alt="Mexico in Tech" className="nav-logo-icon" />
-              <span className="nav-logo-text">Mexico in Tech</span>
+              <img src={logoAwsUgTlaxcala} alt="AWS User Group Tlaxcala" className="nav-logo-icon nav-logo-icon-aws" />
+              <span className="nav-logo-text nav-logo-text-long">Mexico in Tech | AWS User Group Tlaxcala</span>
+              <span className="nav-logo-text nav-logo-text-short" aria-hidden="true">MXINTECH | AWS UG Tlx</span>
             </div>
           </div>
 
@@ -477,10 +549,10 @@ function App() {
               {/* Enlaces del menú */}
               <ul className={`nav-links ${menuOpen ? 'open' : ''}`}>
                 <li>
-                  <Link to="/" onClick={closeMenu} className="nav-link-item">
+                  <a href="/#inicio" onClick={closeMenu} className="nav-link-item">
                     <FaHome className="nav-link-icon" aria-hidden />
                     <span>Inicio</span>
-                  </Link>
+                  </a>
                 </li>
                 <li>
                   <a href="/#acercade" onClick={closeMenu} className="nav-link-item">
@@ -508,11 +580,11 @@ function App() {
         </nav>
       </header>
 
-      
+
       <button className="theme-toggle" onClick={toggleTheme} aria-label="Cambiar tema">
         {theme === 'dark' ? '☀️' : '🌙'}
       </button>
-      
+
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -625,6 +697,17 @@ function App() {
                   aria-label="Twitch"
                 >
                   <FaTwitch />
+                </a>
+              </div>
+              <div className="footer-meetup-row">
+                <a
+                  href="https://www.meetup.com/aws-user-group-tlaxcala/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="eventos-meetup-link footer-meetup-link"
+                >
+                  <SiMeetup className="eventos-meetup-icon" aria-hidden />
+                  <span>Unirse en Meetup</span>
                 </a>
               </div>
             </div>

@@ -3,13 +3,22 @@ import "./Slider.css";
 import slide1 from "./assets/slide1.jpg";
 import slide2 from "./assets/slide2.jpg";
 import slide3 from "./assets/slide3.jpg";
-
+import { FaStar } from "react-icons/fa";
+import { SiAmazonwebservices } from "react-icons/si";
 
 const Slider = () => {
   const slides = [
-    { id: 1, url: slide1, caption: "Aprendimos sobre AWS" },
-    { id: 2, url: slide2, caption: "Aprendimos sobre ArgoCD, GitOps, Rollouts" },
-    { id: 3, url: slide3, caption: "Aprendimos sobre Kubernetes" },
+    {
+      id: 1,
+      url: slide1,
+      caption: "Oficialmente Somos un AWS User Group.",
+      icons: [
+        { Icon: FaStar, key: "tada", label: "Celebration" },
+        { Icon: SiAmazonwebservices, key: "aws", label: "AWS" },
+      ],
+    },
+    { id: 2, url: slide2, caption: "1er meetup presencial de la comunidad." },
+    { id: 3, url: slide3, caption: "Webinar: Aprendimos sobre GitOps, ArgoCD, Rollouts y más." },
   ];
 
   const [current, setCurrent] = useState(0);
@@ -23,7 +32,8 @@ const Slider = () => {
   };
 
   useEffect(() => {
-    const id = setInterval(nextSlide, 10000);
+    const intervalMs = 15000; // 15 seconds per slide
+    const id = setInterval(nextSlide, intervalMs);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -37,6 +47,13 @@ const Slider = () => {
       >
         <div className="slider-overlay" />
         <div className="slider-welcome-message">
+          {slides[current].icons && (
+            <div className="slider-caption-icons" aria-hidden>
+              {slides[current].icons.map(({ Icon, key, label }) => (
+                <Icon key={key} className={`slider-icon slider-icon-${key}`} aria-label={label} />
+              ))}
+            </div>
+          )}
           <p className="caption">{slides[current].caption}</p>
         </div>
         <div className="slider-controls">

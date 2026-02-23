@@ -58,6 +58,23 @@ html, body {
   scroll-padding-top: var(--header-height);
 }
 
+/* Disable scroll-snap on mobile and tablet (e.g. iPad 810px) for natural scrolling */
+@media (max-width: 900px) {
+  html,
+  body {
+    scroll-snap-type: none;
+    scroll-padding-top: 0;
+  }
+
+  .section {
+    scroll-snap-align: none;
+  }
+
+  .Main-content section {
+    margin-bottom: 1.5rem;
+  }
+}
+
 .Main-content section {
   margin-bottom: 3rem;
   background: rgb(203, 166, 178);

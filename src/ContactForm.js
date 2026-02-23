@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './ContactForm.css';
 
 const ContactForm = ({ contactType, title, description }) => {
+  const successTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (successTimeoutRef.current) clearTimeout(successTimeoutRef.current);
+    };
+  }, []);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -61,8 +69,16 @@ const ContactForm = ({ contactType, title, description }) => {
     setSubmitStatus(null);
     setErrorMessage('');
 
+    const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
+    const placeholderPattern = /your-api-endpoint\.execute-api\.region\.amazonaws\.com/i;
+    if (!apiEndpoint || placeholderPattern.test(apiEndpoint)) {
+      setIsSubmitting(false);
+      setSubmitStatus('error');
+      setErrorMessage('El formulario no está configurado. Por favor configure REACT_APP_API_ENDPOINT o contacte al administrador.');
+      return;
+    }
+
     try {
-      const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'https://your-api-endpoint.execute-api.region.amazonaws.com/prod';
       const response = await fetch(`${apiEndpoint}/contact`, {
         method: 'POST',
         headers: {
@@ -84,6 +100,7 @@ const ContactForm = ({ contactType, title, description }) => {
       }
 
       // Success
+      if (successTimeoutRef.current) clearTimeout(successTimeoutRef.current);
       setSubmitStatus('success');
       setFormData({
         name: '',
@@ -92,9 +109,10 @@ const ContactForm = ({ contactType, title, description }) => {
         message: ''
       });
 
-      // Clear success message after 5 seconds
-      setTimeout(() => {
+      // Clear success message after 5 seconds; cleanup on unmount or next submit
+      successTimeoutRef.current = setTimeout(() => {
         setSubmitStatus(null);
+        successTimeoutRef.current = null;
       }, 5000);
 
     } catch (error) {
