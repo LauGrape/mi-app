@@ -107,18 +107,23 @@ section.acercade-section {
 
 .acercade-slider-viewport {
   width: 100%;
-  height: auto;
+  flex: 1;
+  min-height: 0;
   min-width: 0;
   overflow: hidden;
+  display: flex;
+  max-height: 180px;
 }
 
-/* 3 columns: 10% | 80% | 10%; center = full box, sides = peek of prev/next */
+/* 3 columns: 10% | 80% | 10%; center = full box, sides = peek of prev/next (wrap: 1st↔3rd) */
 .acercade-slider-cols {
   display: grid;
   grid-template-columns: 10% 80% 10%;
   gap: 0;
-  height: auto;
-  align-items: start;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  align-items: stretch;
 }
 
 .acercade-col {
@@ -135,31 +140,28 @@ section.acercade-section {
 .acercade-col-center {
   display: flex;
   padding: 0 0.25rem;
+  min-width: 0;
 }
 
+/* Peek strips: wrap is 8× column width (= 80% viewport) so center box and side peeks match */
 .acercade-slide-box-wrap {
   position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
   width: 800%;
-  min-height: 0;
+  min-height: 100%;
+  height: 100%;
 }
 
+/* Left column: show right 10% of previous slide (wrap: when on 1st, prev = 3rd) */
 .acercade-col-prev .acercade-slide-box-wrap {
   right: 0;
   left: auto;
-  display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
 }
 
+/* Right column: show left 10% of next slide (wrap: when on 3rd, next = 1st) */
 .acercade-col-next .acercade-slide-box-wrap {
   left: 0;
   right: auto;
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
 }
 
 .acercade-col-prev .acercade-slide-box,
@@ -167,16 +169,19 @@ section.acercade-section {
   width: 100%;
   min-width: 0;
   flex-shrink: 0;
+  height: 100%;
+  min-height: 100%;
 }
 
 .acercade-col-center .acercade-slide-box {
-  flex: 0 0 auto;
+  flex: 1 1 auto;
   min-width: 0;
+  width: 100%;
 }
 
 .acercade-slide-box {
   height: auto;
-  min-height: 0;
+  min-height: 120px;
   padding: clamp(0.75rem, 2vw, 1.25rem);
   background: var(--card-bg, #fff);
   border-radius: 16px;
