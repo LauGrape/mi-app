@@ -30,7 +30,9 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaCircle,
-  FaRegCircle
+  FaRegCircle,
+  FaMoon,
+  FaSun
 } from 'react-icons/fa';
 import { SiMeetup } from 'react-icons/si';
 
@@ -670,9 +672,21 @@ function App() {
       </div>
 
 
-      <button className="theme-toggle" onClick={toggleTheme} aria-label="Cambiar tema">
-        {theme === 'dark' ? '☀️' : '🌙'}
-      </button>
+      <div className="theme-toggle-wrap">
+        <input
+          type="checkbox"
+          className="theme-checkbox"
+          id="theme-checkbox"
+          checked={theme === 'dark'}
+          onChange={toggleTheme}
+          aria-label="Cambiar tema"
+        />
+        <label htmlFor="theme-checkbox" className="theme-checkbox-label">
+          <FaMoon className="theme-icon theme-icon-moon" aria-hidden />
+          <FaSun className="theme-icon theme-icon-sun" aria-hidden />
+          <span className="theme-ball" />
+        </label>
+      </div>
 
       <main>
         <Routes>

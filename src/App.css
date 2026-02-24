@@ -1357,8 +1357,8 @@ video {
 
 /* Footer */
 .footer {
-  background-color: #6f99f2;
-  background-image: linear-gradient(135deg, #5f89e2 0%, #6f99f2 50%, #84abff 100%);
+  background-color: #3159ad;
+  background-image: linear-gradient(135deg, #3159ad 0%, #4a6fc4 50%, #5f85d4 100%);
   color: rgba(229, 231, 234, 0.7);
   text-align: center;
   padding: 1rem;
@@ -1571,8 +1571,8 @@ video {
 
 /* Estilo base de la nav */
 .header {
-  background-color: #6f99f2;
-  background-image: linear-gradient(135deg, #5f89e2 0%, #6f99f2 50%, #84abff 100%);
+  background-color: #3159ad;
+  background-image: linear-gradient(135deg, #3159ad 0%, #4a6fc4 50%, #5f85d4 100%);
   color: white;
   position: fixed;
   top: 0;
@@ -1799,8 +1799,8 @@ main {
     right: 0;
     margin-top: 0.5rem;
     border-radius: 8px;
-    background-color: #6f99f2;
-    background-image: linear-gradient(135deg, #5f89e2 0%, #6f99f2 50%, #84abff 100%);
+    background-color: #3159ad;
+    background-image: linear-gradient(135deg, #3159ad 0%, #4a6fc4 50%, #5f85d4 100%);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
     z-index: 1000;
     width: max-content;
@@ -1888,18 +1888,59 @@ main {
   }
 }
 
-.theme-toggle {
+.theme-toggle-wrap {
   position: fixed;
   inset: auto 1rem 1rem auto;
-  background: var(--nav-bg);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  color: white;
-  border-radius: 999px;
-  padding: 0.35rem 0.8rem;
-  cursor: pointer;
-  font-size: 1.1rem;
   z-index: 2000;
-  box-shadow: 0 4px 12px var(--shadow-strong);
+}
+
+.theme-checkbox {
+  opacity: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.theme-checkbox-label {
+  background-color: #1B3F8B;
+  width: 50px;
+  height: 26px;
+  border-radius: 50px;
+  position: relative;
+  padding: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px var(--shadow-strong, rgba(0, 0, 0, 0.3));
+}
+
+.theme-icon {
+  font-size: 0.85rem;
+  z-index: 1;
+}
+
+.theme-icon-moon {
+  color: #f1c40f;
+}
+
+.theme-icon-sun {
+  color: #f39c12;
+}
+
+.theme-checkbox-label .theme-ball {
+  background-color: #fff;
+  width: 22px;
+  height: 22px;
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  border-radius: 50%;
+  transition: transform 0.2s linear;
+  pointer-events: none;
+}
+
+.theme-checkbox:checked + .theme-checkbox-label .theme-ball {
+  transform: translateX(24px);
 }
 
 @media (prefers-reduced-motion: reduce) {
