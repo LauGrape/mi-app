@@ -117,3 +117,83 @@ The application includes 4 different contact forms:
 - **Business** (`/contact/business`): Sponsor the community or establish business relations
 
 All forms submit to the same API Gateway endpoint with a `contactType` field to differentiate submission types.
+
+## Deploy to S3 (static web hosting)
+
+To build the app and serve it from an S3 bucket:
+
+### 1. Build the app
+
+```bash
+npm run build
+```
+
+This creates a `build/` folder with minified static files (HTML, JS, CSS, assets).
+
+### 2. Create and configure the S3 bucket (one-time)
+
+Create a bucket and enable static website hosting:
+
+```bash
+# Set your bucket name and region
+export BUCKET_NAME=your-website-bucket
+export AWS_REGION=us-east-1
+
+# Create bucket
+aws s3 mb s3://$BUCKET_NAME --region $AWS_REGION
+
+# Enable static website hosting (index + error document for client-side routing)
+aws s3 website s3://$BUCKET_NAME --index-document index.html --error-document index.html
+```
+
+**Important:** Using `index.html` as the error document makes React Router work when users open or refresh URLs like `/contact/member`; S3 will serve `index.html` for 404s and the app will handle the route.
+
+Make the bucket contents publicly readable (for a public site):
+
+```bash
+# Bucket policy (replace YOUR_BUCKET_NAME)
+aws s3api put-bucket-policy --bucket $BUCKET_NAME --policy '{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Sid": "PublicReadGetObject",
+    "Effect": "Allow",
+    "Principal": "*",
+    "Action": "s3:GetObject",
+    "Resource": "arn:aws:s3:::YOUR_BUCKET_NAME/*"
+  }]
+}'
+```
+
+Replace `YOUR_BUCKET_NAME` in the policy with your actual bucket name, or use:
+
+```bash
+aws s3api put-bucket-policy --bucket $BUCKET_NAME --policy "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"PublicReadGetObject\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::$BUCKET_NAME/*\"}]}"
+```
+
+### 3. Upload the build
+
+**Option A – npm script (build + sync):**
+
+```bash
+export S3_BUCKET=your-website-bucket
+npm run deploy:s3
+```
+
+**Option B – Manual commands:**
+
+```bash
+# Sync all built files; remove objects in S3 that are no longer in build/
+aws s3 sync build/ s3://$BUCKET_NAME/ --delete \
+  --cache-control "public, max-age=31536000, immutable" \
+  --exclude "index.html" --exclude "asset-manifest.json"
+
+# Upload index.html and manifest with short cache so updates are visible quickly
+aws s3 cp build/index.html s3://$BUCKET_NAME/ --cache-control "public, max-age=0, must-revalidate"
+aws s3 cp build/asset-manifest.json s3://$BUCKET_NAME/ --cache-control "public, max-age=0, must-revalidate"
+```
+
+### 4. Open the site
+
+- **S3 website URL:** `http://<bucket-name>.s3-website-<region>.amazonaws.com`  
+  (from the bucket’s *Properties → Static website hosting* in the AWS Console.)
+- For HTTPS and a custom domain, put CloudFront in front of this S3 website endpoint.

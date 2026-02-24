@@ -13,7 +13,7 @@
 
 .contact-form h4 {
   margin: 0 0 0.5rem 0;
-  color: var(--heading);
+  color: #ef5980;
   font-size: 1.25rem;
 }
 
@@ -49,6 +49,11 @@
   color: var(--heading);
 }
 
+/* Light theme: dark text on white. Dark theme: white text on gradient */
+[data-theme="dark"] .contact-grid .form-group label {
+  color: white;
+}
+
 .contact-form input,
 .contact-form textarea {
   padding: 0.75rem;
@@ -62,8 +67,8 @@
 .contact-form input:focus,
 .contact-form textarea:focus {
   outline: none;
-  border-color: #1B3F8B;
-  box-shadow: 0 0 0 2px rgba(27, 63, 139, 0.1);
+  border-color: #4763A1;
+  box-shadow: 0 0 0 2px rgba(71, 99, 161, 0.1);
 }
 
 .contact-form input:disabled,
@@ -74,7 +79,7 @@
 }
 
 .contact-form button {
-  background-color: #1B3F8B;
+  background-color: #4763A1;
   color: white;
   padding: 0.75rem;
   font-size: 1rem;
@@ -121,4 +126,21 @@
 
 [data-theme="dark"] .form-group label {
   color: var(--text);
+}
+
+[data-theme="dark"] .contact-form button {
+  background-color: #ef5980;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 6px 16px rgba(239, 89, 128, 0.45);
+}
+
+[data-theme="dark"] .contact-form button:hover:not(:disabled) {
+  background-color: #ff7aa2;
+  box-shadow: 0 8px 18px rgba(239, 89, 128, 0.55);
+}
+
+[data-theme="dark"] .contact-form button:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.95);
+  outline-offset: 2px;
 }

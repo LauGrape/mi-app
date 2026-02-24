@@ -61,15 +61,23 @@ Resources:
                   - dynamodb:GetItem
                   - dynamodb:Query
                 Resource: !GetAtt ContactSubmissionsTable.Arn
-        - PolicyName: SESAccess
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - ses:SendEmail
-                  - ses:SendRawEmail
-                Resource: !Sub '${SesIdentityArn}'
+
+  # SES policy attached only when SesIdentityArn is provided (empty Resource is invalid)
+  ContactFormLambdaSESPolicy:
+    Type: AWS::IAM::Policy
+    Condition: HasSesIdentity
+    Properties:
+      PolicyName: SESAccess
+      Roles:
+        - !Ref ContactFormLambdaRole
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - ses:SendEmail
+              - ses:SendRawEmail
+            Resource: !Ref SesIdentityArn
 
   # Lambda function for handling contact form submissions
   ContactFormLambda:
@@ -375,6 +383,7 @@ Resources:
 
 Conditions:
   HasHostedZone: !Not [!Equals [!Ref HostedZoneId, '']]
+  HasSesIdentity: !Not [!Equals [!Ref SesIdentityArn, '']]
 
 Outputs:
   ApiEndpoint:
@@ -385,8 +394,8 @@ Outputs:
   
   ApiCustomDomain:
     Condition: HasHostedZone
-    Description: API Gateway custom domain URL
-    Value: !Sub 'https://api.${ApiDomainName}/contact'
+    Description: API Gateway custom domain URL (base only; app appends /contact)
+    Value: !Sub 'https://api.${ApiDomainName}'
     Export:
       Name: !Sub '${AWS::StackName}-ApiCustomDomain'
   

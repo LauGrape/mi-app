@@ -22,9 +22,11 @@ import {
   FaMicrophone,
   FaHandshake,
   FaCalendarAlt,
+  FaExclamationCircle,
   FaHome,
   FaInfoCircle,
   FaVideo,
+  FaTools,
   FaChevronLeft,
   FaChevronRight,
   FaCircle,
@@ -38,7 +40,7 @@ const ACERCADE_SLIDES = [
     id: 'p-acercade',
     body: [
       'México in Tech es una comunidad dedicada a fomentar el aprendizaje y la colaboración en el ámbito tecnológico.\nSomos oficialmente un ',
-      <strong key="aws-ug">AWS User Group</strong>,
+      { type: 'strong', text: 'AWS User Group' },
       '.\nOfrecemos cursos, webinars y eventos para ayudar a los profesionales a crecer en sus carreras.'
     ]
   },
@@ -56,14 +58,18 @@ const ACERCADE_SLIDES = [
 
 const renderSlideBody = (body) => {
   if (Array.isArray(body)) {
-    return body.map((item, i) => (typeof item === 'string' ? <span key={i}>{item}</span> : item));
+    return body.map((item, i) => {
+      if (typeof item === 'string') return <span key={i}>{item}</span>;
+      if (item && item.type === 'strong') return <strong key={i}>{item.text}</strong>;
+      return item;
+    });
   }
   return body;
 };
 
 const AcercadeSection = () => {
   const [slideIndex, setSlideIndex] = useState(0);
-  const [touchStart, setTouchStart] = useState(null);
+  const touchStartRef = useRef(null);
 
   const goTo = (index) => {
     setSlideIndex(Math.max(0, Math.min(index, ACERCADE_SLIDES.length - 1)));
@@ -80,16 +86,24 @@ const AcercadeSection = () => {
   };
 
   const handleTouchStart = (e) => {
-    setTouchStart(e.targetTouches[0].clientX);
+    touchStartRef.current = e.targetTouches[0].clientX;
   };
 
   const handleTouchEnd = (e) => {
-    if (touchStart == null) return;
-    const dx = e.changedTouches[0].clientX - touchStart;
+    const start = touchStartRef.current;
+    if (start == null) return;
+    touchStartRef.current = null;
+    const dx = e.changedTouches[0].clientX - start;
     const threshold = 50;
     if (dx > threshold) goPrev();
     else if (dx < -threshold) goNext();
-    setTouchStart(null);
+  };
+
+  const handleKeyDown = (e, action) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      action();
+    }
   };
 
   return (
@@ -105,11 +119,19 @@ const AcercadeSection = () => {
             className="acercade-slider-viewport acercade-slider-cols"
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
+            onTouchCancel={() => { touchStartRef.current = null; }}
             role="region"
             aria-label="Contenido Acerca de - desliza para cambiar"
           >
             {/* Left 10%: peek of previous (wrap: when index 0, previous = last) */}
-            <div className="acercade-col acercade-col-prev">
+            <div
+              className="acercade-col acercade-col-prev"
+              role="button"
+              tabIndex={0}
+              onClick={goPrev}
+              onKeyDown={(e) => handleKeyDown(e, goPrev)}
+              aria-label="Ir a la sección anterior"
+            >
               <div className="acercade-slide-box-wrap">
                 <div className="acercade-slide-box">
                   <h4>{ACERCADE_SLIDES[(slideIndex - 1 + ACERCADE_SLIDES.length) % ACERCADE_SLIDES.length].title}</h4>
@@ -127,7 +149,14 @@ const AcercadeSection = () => {
               </div>
             </div>
             {/* Right 10%: peek of next (wrap: when index last, next = first) */}
-            <div className="acercade-col acercade-col-next">
+            <div
+              className="acercade-col acercade-col-next"
+              role="button"
+              tabIndex={0}
+              onClick={goNext}
+              onKeyDown={(e) => handleKeyDown(e, goNext)}
+              aria-label="Ir a la sección siguiente"
+            >
               <div className="acercade-slide-box-wrap">
                 <div className="acercade-slide-box">
                   <h4>{ACERCADE_SLIDES[(slideIndex + 1) % ACERCADE_SLIDES.length].title}</h4>
@@ -203,9 +232,9 @@ const HomePage = () => {
               <Link to="/contact/member" className="hero-button hero-primary">
                 Unete a la comunidad
               </Link>
-              <a href="/#video" className="hero-button hero-secondary">
+              <Link to="/#video" className="hero-button hero-secondary">
                 Ver los próximos eventos
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -235,6 +264,7 @@ const HomePage = () => {
                 <FaYoutube className="play-icon" />
               </div>
             </div>
+            <h3 className="webinar-title">GitOps, ArgoCD, Rollouts y más</h3>
           </a>
           <a
             href="https://youtube.com/live/0Kf2v6D1ApI?feature=share"
@@ -254,6 +284,7 @@ const HomePage = () => {
                 <FaYoutube className="play-icon" />
               </div>
             </div>
+            <h3 className="webinar-title">Mi primera chamba, Tips para recien egresados</h3>
           </a>
           <a
             href="https://youtube.com/live/JlF9ey7S9dI?feature=share"
@@ -273,6 +304,7 @@ const HomePage = () => {
                 <FaYoutube className="play-icon" />
               </div>
             </div>
+            <h3 className="webinar-title">¿Qué necesitas para certificarte como KCNA?</h3>
           </a>
           <a
             href="https://youtube.com/live/4qtKxMpkPsk?feature=share"
@@ -292,6 +324,7 @@ const HomePage = () => {
                 <FaYoutube className="play-icon" />
               </div>
             </div>
+            <h3 className="webinar-title">¿Qué son los orquestadores de contenedores?</h3>
           </a>
         </div>
         <div className="webinars-subscribe">
@@ -337,7 +370,11 @@ const HomePage = () => {
             <p>Kubernetes Community Day 2026, Guadalajara</p>
             <p className="eventos-date">
               <FaCalendarAlt aria-hidden />
-              28 de febrero de 2026
+              <s>28 de febrero de 2026</s>
+            </p>
+            <p className="eventos-date eventos-date-update">
+              <FaExclamationCircle aria-hidden />
+              <strong>Fecha actualizada: 18 de Abril de 2026</strong>
             </p>
             <img src={eventosImage} alt="Kubernetes Community Day 2026, Guadalajara" />
           </div>
@@ -455,42 +492,52 @@ const BusinessContactPage = () => (
 const CursosPage = () => (
   <section id="info" className="section info-section">
     <h2>Cursos Disponibles</h2>
-    <div className="info-cards">
-      <div className="info-card">
-        <h3>Servidores Linux</h3>
-        <p>Administra un servidor Linux.</p>
+      <div className="info-cards">
+        <div className="info-card">
+          <h3>Servidores Linux</h3>
+          <p>Administra un servidor Linux.</p>
+          <p className="wip-label"><FaTools aria-hidden /><span>Disponibles muy pronto</span></p>
+        </div>
+        <div className="info-card">
+          <h3>Linux: Command Line</h3>
+          <p>Aprende a usar comandos útiles en la terminal.</p>
+          <p className="wip-label"><FaTools aria-hidden /><span>Disponibles muy pronto</span></p>
+        </div>
+        <div className="info-card">
+          <h3>AWS IAM</h3>
+          <p>Roles, Políticas, Usuarios y Grupos.</p>
+          <p className="wip-label"><FaTools aria-hidden /><span>Disponibles muy pronto</span></p>
+        </div>
+        <div className="info-card">
+          <h3>AWS S3</h3>
+          <p>Almacenamiento, políticas S3 y ciclo de vida.</p>
+          <p className="wip-label"><FaTools aria-hidden /><span>Disponibles muy pronto</span></p>
+        </div>
+        <div className="info-card">
+          <h3>AWS RDS</h3>
+          <p>Bases de datos MySQL y PostgreSQL.</p>
+          <p className="wip-label"><FaTools aria-hidden /><span>Disponibles muy pronto</span></p>
+        </div>
       </div>
-      <div className="info-card">
-        <h3>Linux: Command Line</h3>
-        <p>Aprende a usar comandos útiles en la terminal.</p>
-      </div>
-      <div className="info-card">
-        <h3>AWS IAM</h3>
-        <p>Roles, Políticas, Usuarios y Grupos.</p>
-      </div>
-      <div className="info-card">
-        <h3>AWS S3</h3>
-        <p>Almacenamiento, políticas S3 y ciclo de vida.</p>
-      </div>
-      <div className="info-card">
-        <h3>AWS RDS</h3>
-        <p>Bases de datos MySQL y PostgreSQL.</p>
-      </div>
-    </div>
   </section>
 );
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState('light');
+  const [hideAnnouncementMobile, setHideAnnouncementMobile] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-    const initialTheme = prefersDark.matches ? 'dark' : 'light';
+    const savedTheme = localStorage.getItem('theme');
+    const initialTheme = savedTheme === 'dark' || savedTheme === 'light'
+      ? savedTheme
+      : (prefersDark.matches ? 'dark' : 'light');
     setTheme(initialTheme);
 
     const handleChange = (event) => {
+      if (localStorage.getItem('theme')) return;
       setTheme(event.matches ? 'dark' : 'light');
     };
 
@@ -501,6 +548,7 @@ function App() {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
   }, [theme]);
 
   /* Scroll to hash (e.g. #inicio) when navigating from another route */
@@ -512,6 +560,26 @@ function App() {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [location.pathname, location.hash]);
+
+  useEffect(() => {
+    const handleAnnouncementVisibility = () => {
+      const isMobile = window.matchMedia('(max-width: 768px)').matches;
+      if (!isMobile) {
+        setHideAnnouncementMobile(false);
+        return;
+      }
+      setHideAnnouncementMobile(window.scrollY > 24);
+    };
+
+    handleAnnouncementVisibility();
+    window.addEventListener('scroll', handleAnnouncementVisibility, { passive: true });
+    window.addEventListener('resize', handleAnnouncementVisibility);
+
+    return () => {
+      window.removeEventListener('scroll', handleAnnouncementVisibility);
+      window.removeEventListener('resize', handleAnnouncementVisibility);
+    };
+  }, []);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -526,7 +594,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className={`App ${hideAnnouncementMobile ? 'announcement-collapsed-mobile' : ''}`}>
       {/* Barra de navegación */}
       <header className="header">
         <nav className="nav">
@@ -549,28 +617,28 @@ function App() {
               {/* Enlaces del menú */}
               <ul className={`nav-links ${menuOpen ? 'open' : ''}`}>
                 <li>
-                  <a href="/#inicio" onClick={closeMenu} className="nav-link-item">
+                  <Link to="/#inicio" onClick={closeMenu} className="nav-link-item">
                     <FaHome className="nav-link-icon" aria-hidden />
                     <span>Inicio</span>
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/#acercade" onClick={closeMenu} className="nav-link-item">
+                  <Link to="/#acercade" onClick={closeMenu} className="nav-link-item">
                     <FaInfoCircle className="nav-link-icon" aria-hidden />
                     <span>Acerca de</span>
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/#video" onClick={closeMenu} className="nav-link-item">
+                  <Link to="/#video" onClick={closeMenu} className="nav-link-item">
                     <FaVideo className="nav-link-icon" aria-hidden />
                     <span>Webinars</span>
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/#eventos" onClick={closeMenu} className="nav-link-item">
+                  <Link to="/#eventos" onClick={closeMenu} className="nav-link-item">
                     <FaCalendarAlt className="nav-link-icon" aria-hidden />
                     <span>Eventos</span>
-                  </a>
+                  </Link>
                 </li>
                 {/*<li><Link to="/cursos" onClick={closeMenu}>Cursos</Link></li>*/}
                 {/*<li><Link to="/contact" onClick={closeMenu}>Contacto</Link></li>*/}
@@ -579,6 +647,27 @@ function App() {
           </div>
         </nav>
       </header>
+
+      <div
+        className={`announcement-bar ${hideAnnouncementMobile ? 'announcement-bar--hidden-mobile' : ''}`}
+        role="status"
+        aria-live="polite"
+      >
+        <div className="announcement-content">
+          <FaExclamationCircle className="announcement-icon" aria-hidden />
+          <span className="announcement-text">
+            Anuncio importante: Kubernetes Community Day cambió de fecha de <s>28 de Febrero de 2026</s> a <strong>18 de Abril de 2026</strong>.{" "}
+            <a
+              href="https://community.cncf.io/events/details/cncf-kcd-guadalajara-presents-kcd-guadalajara-2026/cohost-kcd-guadalajara/#/purchase"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="announcement-link"
+            >
+              Sitio oficial
+            </a>
+          </span>
+        </div>
+      </div>
 
 
       <button className="theme-toggle" onClick={toggleTheme} aria-label="Cambiar tema">
